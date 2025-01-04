@@ -7,6 +7,11 @@ pub use crate::traits::lead_object::*;
 pub use crate::traits::property_list::*;
 pub use crate::traits::shape::*;
 
+pub use crate::macros::*;
+
+pub use crate::utils::vector2::{Vector2f, Vector2d};
+pub use crate::utils::vector3::{Vector3f, Vector3d, coordinate_system};
+
 pub use crate::impls::scene::*;
 
 pub fn indent(input: &str, spaces: usize) -> String {
@@ -17,15 +22,3 @@ pub fn indent(input: &str, spaces: usize) -> String {
         .collect::<Vec<_>>()
         .join("\n")
 }
-
-#[macro_export]
-macro_rules! register_struct {
-    ($inp1:expr, $inp2:expr) => {
-        #[ctor::ctor]
-        fn register_sphere() {
-            register_lead_object($inp1, $inp2);
-        }
-    };
-}
-
-pub use register_struct;
