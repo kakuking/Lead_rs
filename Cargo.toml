@@ -1,0 +1,9 @@
+[package]
+name = "Lead"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+lazy_static = "1.4"
+ctor = "0.1"
+quick-xml = "0.37.2"

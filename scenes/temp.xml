@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scene>
+    <sphere>
+        <float name="radius" value="0.69"/>
+    </sphere>
+
+    <sphere>
+        <!-- <float name="radius" value="0.69"/> -->
+    </sphere>
+    
+    <!-- <camera type="orthographic">
+        <point name="eye" value="0.0, 0.0, -5.0"/>
+        <point name="lookat" value="0.0, 0.0, 0.0"/>
+        <point name="size" value="200, 200, 0"/>
+    </camera>
+
+    <sampler type="independent">
+        <int name="sampleCount" value="16"/>
+    </sampler>
+    
+    <integrator type="occlusion">
+        <color name="active" value="0.5, 0.1, 0.5"/>
+    </integrator>
+
+    <shape type="mesh">
+        <string name="filename" value="./meshes/camelhead.obj"/>
+
+        <transform>
+            <scale value="2, 2, 2"/>
+            <rotate axis="0, 1, 0" angle="45"/>
+        </transform>
+    </shape> -->
+</scene>
