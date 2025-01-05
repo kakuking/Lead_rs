@@ -4,17 +4,16 @@ use std::ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, 
 use std::fmt::Display;
 use std::str::FromStr;
 
-use super::point2::Point2;
-use super::vector3::Vector3;
+use super::vector2::Vector2;
 
 #[derive(Debug, Clone, Copy)]
-pub struct Vector2<T> 
+pub struct Point2<T> 
 where T: Float + Copy{
     pub x: T,
     pub y: T
 }
 
-impl<T> Vector2<T>
+impl<T> Point2<T>
     where T: Float + Copy + Display + FromStr,
     <T as FromStr>::Err: std::fmt::Debug 
 {
@@ -39,7 +38,7 @@ impl<T> Vector2<T>
         }
     }
 
-    pub fn init_copy(other: &Vector2<T>) -> Self {
+    pub fn init_copy(other: &Self) -> Self {
         if other.has_nan() {
             println!("Vector tryingto be copied has Nans!");
             return Self::new();
@@ -87,21 +86,6 @@ impl<T> Vector2<T>
         format!("[{}, {}]", self.x, self.y)
     }
 
-    pub fn dot(v1: &Self, v2: &Self) -> T {
-        v1.x * v2.x + v1.y*v2.y
-    }
-
-    pub fn abs_dot(v1: &Self, v2: &Self) -> T {
-        Self::dot(v1, v2).abs()
-    }
-
-    pub fn cross(v1: &Self, v2: &Self) -> Vector3<T> {
-        let t1: Vector3<T> = Vector3::init(v1.x, v1.y, T::zero());
-        let t2: Vector3<T> = Vector3::init(v2.x, v2.y, T::zero());
-
-        Vector3::cross(&t1, &t2)
-    }
-
     pub fn normalize(v: &Self) -> Self {
         let l = v.length();
         Self::init(v.x / l, v.y / l)
@@ -146,18 +130,47 @@ impl<T> Vector2<T>
     pub fn permute(v: &Self, x: usize, y: usize) -> Self {
         Self::init(v[x], v[y])
     }
+
+    pub fn distance(p1: &Self, p2: &Self) -> T {
+        (*p1 - *p2).length()
+    }
+
+    pub fn distance_sqr(p1: &Self, p2: &Self) -> T {
+        (*p1 - *p2).length_sqr()
+    }
+
+    pub fn floor(&self) -> Self {
+        Self {
+            x: self.x.floor(),
+            y: self.y.floor(),
+        }
+    }
+
+    pub fn ceil(&self) -> Self {
+        Self {
+            x: self.x.ceil(),
+            y: self.y.ceil(),
+        }
+    }
+
+    pub fn abs(&self) -> Self {
+        Self {
+            x: self.x.abs(),
+            y: self.y.abs(),
+        }
+    }
 }
 
-impl_operator_2!(Vector2<T>, Add, add, +, Vector2<T>);
-impl_operator_2!(Vector2<T>, Sub, sub, -, Vector2<T>);
-impl_operator_2!(Vector2<T>, Mul, mul, *, Vector2<T>);
-impl_operator_2!(Vector2<T>, Div, div, /, Vector2<T>);
-impl_operator_unary_2!(Vector2<T>, Neg, neg, -);
-impl_operator_inplace_2!(Vector2<T>, AddAssign, add_assign, +=);
-impl_operator_inplace_2!(Vector2<T>, SubAssign, sub_assign, -=);
-impl_operator_inplace_2!(Vector2<T>, MulAssign, mul_assign, *=);
-impl_operator_inplace_2!(Vector2<T>, DivAssign, div_assign, /=);
-impl<T> Index<usize> for Vector2<T>
+impl_operator_2!(Point2<T>, Add, add, +, Point2<T>);
+impl_operator_2!(Point2<T>, Sub, sub, -, Vector2<T>);
+impl_operator_2!(Point2<T>, Mul, mul, *, Point2<T>);
+impl_operator_2!(Point2<T>, Div, div, /, Point2<T>);
+impl_operator_unary_2!(Point2<T>, Neg, neg, -);
+impl_operator_inplace_2!(Point2<T>, AddAssign, add_assign, +=);
+impl_operator_inplace_2!(Point2<T>, SubAssign, sub_assign, -=);
+impl_operator_inplace_2!(Point2<T>, MulAssign, mul_assign, *=);
+impl_operator_inplace_2!(Point2<T>, DivAssign, div_assign, /=);
+impl<T> Index<usize> for Point2<T>
 where
     T: Copy + Float,
 {
@@ -172,7 +185,7 @@ where
     }
 }
 
-impl<T> IndexMut<usize> for Vector2<T>
+impl<T> IndexMut<usize> for Point2<T>
 where
     T: Copy + Float,
 {
@@ -185,7 +198,7 @@ where
     }
 }
 
-impl<T> Mul<T> for Vector2<T>
+impl<T> Mul<T> for Point2<T>
     where
     T: Mul<Output = T> + Float + Copy,
 {
@@ -199,7 +212,7 @@ impl<T> Mul<T> for Vector2<T>
     }
 }
 
-impl<T> Div<T> for Vector2<T>
+impl<T> Div<T> for Point2<T>
     where
     T: Div<Output = T> + Float + Copy,
 {
@@ -213,33 +226,31 @@ impl<T> Div<T> for Vector2<T>
         }
     }
 }
-
-impl<T> Add<Point2<T>> for Vector2<T> 
+impl<T> Add<Vector2<T>> for Point2<T> 
     where
     T: Add<Output = T> + Float + Copy {
-        type Output = Point2<T>;
+        type Output = Self;
 
-        fn add(self, rhs: Point2<T>) -> Self::Output {
-            Point2::<T> {
+        fn add(self, rhs: Vector2<T>) -> Self::Output {
+            Self {
                 x: self.x + rhs[0],
                 y: self.y + rhs[1],
             }
         }
 }
 
-impl<T> Sub<Point2<T>> for Vector2<T> 
+impl<T> Sub<Vector2<T>> for Point2<T> 
     where
     T: Sub<Output = T> + Float + Copy {
-        type Output = Point2<T>;
+        type Output = Self;
 
-        fn sub(self, rhs: Point2<T>) -> Self::Output {
-            Point2::<T> {
+        fn sub(self, rhs: Vector2<T>) -> Self::Output {
+            Self {
                 x: self.x - rhs[0],
                 y: self.y - rhs[1],
             }
         }
 }
-
-pub type Vector2i = Vector2<i32>;
-pub type Vector2f = Vector2<f32>;
-pub type Vector2d = Vector2<f64>;
+pub type Point2i = Point2<i32>;
+pub type Point2f = Point2<f32>;
+pub type Point2d = Point2<f64>;

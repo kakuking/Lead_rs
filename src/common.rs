@@ -9,8 +9,14 @@ pub use crate::traits::shape::*;
 
 pub use crate::macros::*;
 
-pub use crate::utils::vector2::{Vector2f, Vector2d};
-pub use crate::utils::vector3::{Vector3f, Vector3d, coordinate_system};
+pub use crate::utils::point2::{Point2i, Point2f, Point2d};
+pub use crate::utils::point3::{Point3i, Point3f, Point3d};
+pub use crate::utils::vector2::{Vector2i, Vector2f, Vector2d};
+pub use crate::utils::vector3::{Vector3i, Vector3f, Vector3d, coordinate_system};
+pub use crate::utils::ray::{Ray, RayDifferential};
+pub use crate::utils::bounding_box::{Bounds2i, Bounds2f, Bounds3i, Bounds3f};
+pub use crate::utils::matrix::Matrix4x4;
+pub use crate::utils::transform::Transform;
 
 pub use crate::impls::scene::*;
 

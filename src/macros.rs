@@ -10,15 +10,15 @@ macro_rules! register_struct {
 
 #[macro_export]
 macro_rules! impl_operator_2 {
-    ($struct:ident<$generic:ident>, $trait:ident, $func:ident, $op:tt) => {
+    ($struct:ident<$generic:ident>, $trait:ident, $func:ident, $op:tt, $opt:ident<$generic_op:ident>) => {
         impl<$generic> $trait for $struct<$generic>
         where
             $generic: $trait<Output = $generic> + Copy + Float,
         {
-            type Output = Self;
+            type Output = $opt<$generic_op>;
 
             fn $func(self, rhs: Self) -> Self::Output {
-                Self {
+                $opt::<$generic_op> {
                     x: self.x $op rhs.x,
                     y: self.y $op rhs.y,
                 }
@@ -63,15 +63,15 @@ macro_rules! impl_operator_inplace_2 {
 
 #[macro_export]
 macro_rules! impl_operator_3 {
-    ($struct:ident<$generic:ident>, $trait:ident, $func:ident, $op:tt) => {
+    ($struct:ident<$generic:ident>, $trait:ident, $func:ident, $op:tt, $opt:ident<$generic_op:ident>) => {
         impl<$generic> $trait for $struct<$generic>
         where
             $generic: $trait<Output = $generic> + Copy + Float,
         {
-            type Output = Self;
+            type Output = $opt<$generic_op>;
 
             fn $func(self, rhs: Self) -> Self::Output {
-                Self {
+                $opt::<$generic_op> {
                     x: self.x $op rhs.x,
                     y: self.y $op rhs.y,
                     z: self.z $op rhs.z,

@@ -24,7 +24,6 @@ impl Parser {
             match reader.read_event_into(&mut buf) {
                 Ok(Event::Start(ref e)) => {
                     if root_node.is_none() {
-                        println!("About to traverse file!");
                         root_node = Some(self.traverse_node(&mut reader, e)?)
                     }
                 },

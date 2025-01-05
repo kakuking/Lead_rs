@@ -4,16 +4,16 @@ use std::ops::{Add, AddAssign, Sub, SubAssign, Mul, MulAssign, Div, DivAssign, N
 use std::fmt::Display;
 use std::str::FromStr;
 
-use super::point3::Point3;
+use super::vector3::Vector3;
 
 #[derive(Debug, Clone, Copy)]
-pub struct Vector3<T: Float + Copy> {
+pub struct Point3<T: Float + Copy> {
     pub x: T,
     pub y: T,
     pub z: T
 }
 
-impl<T> Vector3<T>
+impl<T> Point3<T>
     where T: Float + Copy + Display + FromStr,
     <T as FromStr>::Err: std::fmt::Debug 
 {    
@@ -41,7 +41,7 @@ impl<T> Vector3<T>
         }
     }
 
-    pub fn init_copy(other: &Self) -> Self {
+    pub fn init_copy(other: &Point3<T>) -> Self {
         if other.has_nan() {
             println!("Vector tryingto be copied has Nans!");
             return Self::new();
@@ -70,7 +70,7 @@ impl<T> Vector3<T>
                 Self::init(x, y, z)
             }
             _ => {
-                panic!("Failed to parse input string {input} to vector3");
+                panic!("Failed to parse input string {input} to point3");
             }
         }
     }
@@ -87,28 +87,13 @@ impl<T> Vector3<T>
         (self.x * self.x + self.y * self.y + self.z * self.z).sqrt()
     }
 
-    pub fn to_string(&self) -> String {
-        format!("[{}, {}, {}]", self.x, self.y, self.z)
-    }
-
-    pub fn dot(v1: &Self, v2: &Self) -> T {
-        v1.x*v2.x + v1.y*v2.y + v1.z*v2.z
-    }
-
-    pub fn abs_dot(v1: &Self, v2: &Self) -> T {
-        Self::dot(v1, v2).abs()
-    }
-
-    pub fn cross(v1: &Self, v2: &Self) -> Self {
-        Self::init(
-            v1.y*v2.z - v2.y*v1.z, 
-            v1.z*v2.x - v2.z*v1.x, 
-            v1.x*v2.y - v2.y*v1.x)
-    }
-
     pub fn normalize(v: &Self) -> Self {
         let l = v.length();
         Self::init(v.x / l, v.y / l, v.z / l)
+    }
+
+    pub fn to_string(&self) -> String {
+        format!("[{}, {}, {}]", self.x, self.y, self.z)
     }
 
     pub fn min_component(&self) -> T {
@@ -174,18 +159,50 @@ impl<T> Vector3<T>
     pub fn permute(v: &Self, x: usize, y: usize, z: usize) -> Self {
         Self::init(v[x], v[y], v[z])
     }
+
+    pub fn distance(p1: &Self, p2: &Self) -> T {
+        (*p1 - *p2).length()
+    }
+
+    pub fn distance_sqr(p1: &Self, p2: &Self) -> T {
+        (*p1 - *p2).length_sqr()
+    }
+
+    pub fn floor(&self) -> Self {
+        Self {
+            x: self.x.floor(),
+            y: self.y.floor(),
+            z: self.z.floor(),
+        }
+    }
+
+    pub fn ceil(&self) -> Self {
+        Self {
+            x: self.x.ceil(),
+            y: self.y.ceil(),
+            z: self.z.ceil(),
+        }
+    }
+
+    pub fn abs(&self) -> Self {
+        Self {
+            x: self.x.abs(),
+            y: self.y.abs(),
+            z: self.z.abs(),
+        }
+    }
 }
 
-impl_operator_3!(Vector3<T>, Add, add, +, Vector3<T>);
-impl_operator_3!(Vector3<T>, Sub, sub, -, Vector3<T>);
-impl_operator_3!(Vector3<T>, Mul, mul, *, Vector3<T>);
-impl_operator_3!(Vector3<T>, Div, div, /, Vector3<T>);
-impl_operator_unary_3!(Vector3<T>, Neg, neg, -);
-impl_operator_inplace_3!(Vector3<T>, AddAssign, add_assign, +=);
-impl_operator_inplace_3!(Vector3<T>, SubAssign, sub_assign, -=);
-impl_operator_inplace_3!(Vector3<T>, MulAssign, mul_assign, *=);
-impl_operator_inplace_3!(Vector3<T>, DivAssign, div_assign, /=);
-impl<T> Index<usize> for Vector3<T>
+impl_operator_3!(Point3<T>, Add, add, +, Point3<T>);
+impl_operator_3!(Point3<T>, Sub, sub, -, Vector3<T>);
+impl_operator_3!(Point3<T>, Mul, mul, *, Point3<T>);
+impl_operator_3!(Point3<T>, Div, div, /, Point3<T>);
+impl_operator_unary_3!(Point3<T>, Neg, neg, -);
+impl_operator_inplace_3!(Point3<T>, AddAssign, add_assign, +=);
+impl_operator_inplace_3!(Point3<T>, SubAssign, sub_assign, -=);
+impl_operator_inplace_3!(Point3<T>, MulAssign, mul_assign, *=);
+impl_operator_inplace_3!(Point3<T>, DivAssign, div_assign, /=);
+impl<T> Index<usize> for Point3<T>
 where
     T: Copy + Float,
 {
@@ -201,7 +218,7 @@ where
     }
 }
 
-impl<T> IndexMut<usize> for Vector3<T>
+impl<T> IndexMut<usize> for Point3<T>
 where
     T: Copy + Float,
 {
@@ -215,7 +232,7 @@ where
     }
 }
 
-impl<T> Mul<T> for Vector3<T>
+impl<T> Mul<T> for Point3<T>
     where
     T: Mul<Output = T> + Float + Copy,
 {
@@ -230,7 +247,7 @@ impl<T> Mul<T> for Vector3<T>
     }
 }
 
-impl<T> Div<T> for Vector3<T>
+impl<T> Div<T> for Point3<T>
     where
     T: Div<Output = T> + Float + Copy,
 {
@@ -246,13 +263,13 @@ impl<T> Div<T> for Vector3<T>
     }
 }
 
-impl<T> Add<Point3<T>> for Vector3<T> 
+impl<T> Add<Vector3<T>> for Point3<T> 
     where
     T: Add<Output = T> + Float + Copy {
-        type Output = Point3<T>;
+        type Output = Self;
 
-        fn add(self, rhs: Point3<T>) -> Self::Output {
-            Point3::<T> {
+        fn add(self, rhs: Vector3<T>) -> Self::Output {
+            Self {
                 x: self.x + rhs[0],
                 y: self.y + rhs[1],
                 z: self.z + rhs[2],
@@ -260,13 +277,13 @@ impl<T> Add<Point3<T>> for Vector3<T>
         }
 }
 
-impl<T> Sub<Point3<T>> for Vector3<T> 
+impl<T> Sub<Vector3<T>> for Point3<T> 
     where
     T: Sub<Output = T> + Float + Copy {
-        type Output = Point3<T>;
+        type Output = Self;
 
-        fn sub(self, rhs: Point3<T>) -> Self::Output {
-            Point3::<T> {
+        fn sub(self, rhs: Vector3<T>) -> Self::Output {
+            Self {
                 x: self.x - rhs[0],
                 y: self.y - rhs[1],
                 z: self.z - rhs[2],
@@ -274,21 +291,6 @@ impl<T> Sub<Point3<T>> for Vector3<T>
         }
 }
 
-pub fn coordinate_system<T>(v1: &Vector3<T>, v2: &mut Vector3<T>, v3: &mut Vector3<T>)
-where T: Float + Copy + Display + FromStr,
-<T as FromStr>::Err: std::fmt::Debug  
-{
-    if v1.x.abs() > v1.y.abs() {
-        *v2 = Vector3::init(-v1.z, T::zero(), v1.x);
-        *v2 = Vector3::normalize(v2);
-    } else {
-        *v2 = Vector3::init(T::zero(), v1.z, -v1.y);
-        *v2 = Vector3::normalize(v2);
-    }
-
-    *v3 = Vector3::cross(v1, v2);
-}
-
-pub type Vector3i = Vector3<i32>;
-pub type Vector3f = Vector3<f32>;
-pub type Vector3d = Vector3<f64>;
+pub type Point3i = Point3<i32>;
+pub type Point3f = Point3<f32>;
+pub type Point3d = Point3<f64>;

@@ -9,7 +9,6 @@ pub mod parser;
 
 use common::LeadObject;
 use parser::Parser;
-use crate::common::Vector2f;
 
 fn main() {
     let parser = Parser::new();
@@ -22,12 +21,5 @@ fn main() {
         LeadObject::Scene(scene) => scene,
         _ => panic!("Couldnt find a scene!"),
     };
-
-    let v1 = Vector2f::init_one(0f32);
-    let v2 = Vector2f::init(1f32, 2f32);
-    let v = v1 + v2;
-
-    println!("{}", v.to_string());
-
     println!("{}", main_scene.to_string());
 }
