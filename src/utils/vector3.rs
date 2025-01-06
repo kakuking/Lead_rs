@@ -174,6 +174,10 @@ impl<T> Vector3<T>
     pub fn permute(v: &Self, x: usize, y: usize, z: usize) -> Self {
         Self::init(v[x], v[y], v[z])
     }
+    
+    pub fn equal(p1: &Self, p2: &Self) -> bool {
+        p1.x == p2.x && p1.y == p2.y && p1.z == p2.z
+    }
 }
 
 impl_operator_3!(Vector3<T>, Add, add, +, Vector3<T>);

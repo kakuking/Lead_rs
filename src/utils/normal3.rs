@@ -174,6 +174,10 @@ impl<T> Normal3<T>
         }
         return n.clone();
     }
+
+    pub fn equal(p1: &Self, p2: &Self) -> bool {
+        p1.x == p2.x && p1.y == p2.y && p1.z == p2.z
+    }
 }
 
 impl_operator_3!(Normal3<T>, Add, add, +, Normal3<T>);

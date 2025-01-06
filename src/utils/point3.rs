@@ -191,6 +191,10 @@ impl<T> Point3<T>
             z: self.z.abs(),
         }
     }
+    
+    pub fn equal(p1: &Self, p2: &Self) -> bool {
+        p1.x == p2.x && p1.y == p2.y && p1.z == p2.z
+    }
 }
 
 impl_operator_3!(Point3<T>, Add, add, +, Point3<T>);

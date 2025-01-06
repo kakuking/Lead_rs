@@ -146,6 +146,10 @@ impl<T> Vector2<T>
     pub fn permute(v: &Self, x: usize, y: usize) -> Self {
         Self::init(v[x], v[y])
     }
+    
+    pub fn equal(p1: &Self, p2: &Self) -> bool {
+        p1.x == p2.x && p1.y == p2.y
+    }
 }
 
 impl_operator_2!(Vector2<T>, Add, add, +, Vector2<T>);

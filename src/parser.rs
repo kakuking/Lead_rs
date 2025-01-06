@@ -36,7 +36,7 @@ impl Parser {
         
         match root_node {
             Some(root) => Ok(root),
-            None => Err("Error reading XML".to_string())
+            None => Err("Error reading XML, no root found".to_string())
         }
     }
 

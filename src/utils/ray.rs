@@ -25,8 +25,8 @@ impl Ray {
         Self{
             o: Point3f::new(),
             d: Vector3f::new(),
-            t_min: f32::EPSILON,
-            t_max: f32::INFINITY
+            t_min: EPSILON,
+            t_max: INFINITY
         }
     }
 
@@ -57,8 +57,8 @@ impl RayDifferential {
         Self{
             o: Point3f::new(),
             d: Vector3f::new(),
-            t_min: f32::EPSILON,
-            t_max: f32::INFINITY,
+            t_min: EPSILON,
+            t_max: INFINITY,
 
             rx_o: Point3f::new(),
             ry_o: Point3f::new(),
