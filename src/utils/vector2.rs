@@ -46,8 +46,8 @@ impl<T> Vector2<T>
         }
 
         Self {
-            x: other.x,
-            y: other.y
+            x: other.x(),
+            y: other.y()
         }
     }
 
@@ -72,23 +72,23 @@ impl<T> Vector2<T>
     }
 
     pub fn has_nan(&self) -> bool {
-        self.x.is_nan() || self.y.is_nan()
+        self.x().is_nan() || self.y().is_nan()
     }
 
     pub fn length_sqr(&self) -> T {
-        self.x * self.x + self.y * self.y
+        self.x() * self.x() + self.y() * self.y()
     }
 
     pub fn length(&self) -> T {
-        (self.x * self.x + self.y * self.y).sqrt()
+        (self.x() * self.x() + self.y() * self.y()).sqrt()
     }
 
     pub fn to_string(&self) -> String {
-        format!("[{}, {}]", self.x, self.y)
+        format!("[{}, {}]", self.x(), self.y())
     }
 
     pub fn dot(v1: &Self, v2: &Self) -> T {
-        v1.x * v2.x + v1.y*v2.y
+        v1.x() * v2.x() + v1.y()*v2.y()
     }
 
     pub fn abs_dot(v1: &Self, v2: &Self) -> T {
@@ -96,34 +96,34 @@ impl<T> Vector2<T>
     }
 
     pub fn cross(v1: &Self, v2: &Self) -> Vector3<T> {
-        let t1: Vector3<T> = Vector3::init(v1.x, v1.y, T::zero());
-        let t2: Vector3<T> = Vector3::init(v2.x, v2.y, T::zero());
+        let t1: Vector3<T> = Vector3::init(v1.x(), v1.y(), T::zero());
+        let t2: Vector3<T> = Vector3::init(v2.x(), v2.y(), T::zero());
 
         Vector3::cross(&t1, &t2)
     }
 
     pub fn normalize(v: &Self) -> Self {
         let l = v.length();
-        Self::init(v.x / l, v.y / l)
+        Self::init(v.x() / l, v.y() / l)
     }
 
     pub fn min_component(&self) -> T {
-        self.x.min(self.y)
+        self.x().min(self.y())
     }
 
     pub fn max_component(&self) -> T {
-        self.x.max(self.y)
+        self.x().max(self.y())
     }
 
     pub fn min_dimension(&self) -> usize {
-        if self.x < self.y {
+        if self.x() < self.y() {
             return 0usize;
         }
         return 1usize;
     }
 
     pub fn max_dimension(&self) -> usize {
-        if self.x > self.y {
+        if self.x() > self.y() {
             return 0usize;
         }
         return 1usize;
@@ -131,15 +131,15 @@ impl<T> Vector2<T>
 
     pub fn min(v1: &Self, v2: &Self) -> Self {
         Self::init(
-            v1.x.min(v2.x), 
-            v1.y.min(v2.y)
+            v1.x().min(v2.x()), 
+            v1.y().min(v2.y())
         )
     }
 
     pub fn max(v1: &Self, v2: &Self) -> Self {
         Self::init(
-            v1.x.max(v2.x), 
-            v1.y.max(v2.y)
+            v1.x().max(v2.x()), 
+            v1.y().max(v2.y())
         )
     }
 
@@ -148,7 +148,7 @@ impl<T> Vector2<T>
     }
     
     pub fn equal(p1: &Self, p2: &Self) -> bool {
-        p1.x == p2.x && p1.y == p2.y
+        p1.x() == p2.x() && p1.y() == p2.y()
     }
 }
 
@@ -169,8 +169,8 @@ where
 
     fn index(&self, idx: usize) -> &Self::Output {
         match idx {
-            0 => &self.x,
-            1 => &self.y,
+            0 => &self.x(),
+            1 => &self.y(),
             _ => panic!("Index out of bounds while accessing vec2!")
         }
     }
@@ -182,8 +182,8 @@ where
 {
     fn index_mut(&mut self, idx: usize) -> &mut Self::Output {
         match idx {
-            0 => &mut self.x,
-            1 => &mut self.y,
+            0 => &mut self.x(),
+            1 => &mut self.y(),
             _ => panic!("Index out of bounds while accessing vec2!")
         }
     }
@@ -197,8 +197,8 @@ impl<T> Mul<T> for Vector2<T>
 
     fn mul(self, rhs: T) -> Self::Output {
         Self {
-            x: self.x * rhs,
-            y: self.y * rhs,
+            x: self.x() * rhs,
+            y: self.y() * rhs,
         }
     }
 }
@@ -212,8 +212,8 @@ impl<T> Div<T> for Vector2<T>
     fn div(self, rhs: T) -> Self::Output {
         assert!(rhs != T::zero(), "RHS cannot be zero for division!");
         Self {
-            x: self.x / rhs,
-            y: self.y / rhs,
+            x: self.x() / rhs,
+            y: self.y() / rhs,
         }
     }
 }
@@ -225,8 +225,8 @@ impl<T> Add<Point2<T>> for Vector2<T>
 
         fn add(self, rhs: Point2<T>) -> Self::Output {
             Point2::<T> {
-                x: self.x + rhs[0],
-                y: self.y + rhs[1],
+                x: self.x() + rhs[0],
+                y: self.y() + rhs[1],
             }
         }
 }
@@ -238,8 +238,8 @@ impl<T> Sub<Point2<T>> for Vector2<T>
 
         fn sub(self, rhs: Point2<T>) -> Self::Output {
             Point2::<T> {
-                x: self.x - rhs[0],
-                y: self.y - rhs[1],
+                x: self.x() - rhs[0],
+                y: self.y() - rhs[1],
             }
         }
 }

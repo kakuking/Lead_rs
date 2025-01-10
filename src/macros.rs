@@ -9,109 +9,59 @@ macro_rules! register_struct {
 }
 
 #[macro_export]
-macro_rules! impl_operator_2 {
-    ($struct:ident<$generic:ident>, $trait:ident, $func:ident, $op:tt, $opt:ident<$generic_op:ident>) => {
-        impl<$generic> $trait for $struct<$generic>
+macro_rules! impl_operator {
+    ($struct:ident<$generic:ident, const $size:ident: usize>, $trait:ident, $func:ident, $op:tt, $opt:ident<$generic_op:ident, const $size_op:ident: usize>) => {
+        impl<$generic, const $size: usize> $trait for $struct<$generic, $size>
         where
-            $generic: $trait<Output = $generic> + Copy + Float,
+            $generic: $trait<Output = $generic> + Float + Copy + Display + FromStr,
+            <T as FromStr>::Err: std::fmt::Debug 
         {
-            type Output = $opt<$generic_op>;
+            type Output = $opt<$generic_op, $size>;
 
             fn $func(self, rhs: Self) -> Self::Output {
-                $opt::<$generic_op> {
-                    x: self.x $op rhs.x,
-                    y: self.y $op rhs.y,
+                let mut result = [self[0] $op rhs[0]; $size];
+                for i in 0..$size {
+                    result[i] = self[i] $op rhs[i];
                 }
+                $opt::<$generic_op, $size>::init(result)
             }
         }
     };
 }
 
 #[macro_export]
-macro_rules! impl_operator_unary_2 {
-    ($struct:ident<$generic:ident>, $trait:ident, $func:ident, $op:tt) => {
-        impl<$generic> $trait for $struct<$generic>
+macro_rules! impl_operator_unary {
+    ($struct:ident<$generic:ident, const $size:ident: usize>, $trait:ident, $func:ident, $op:tt) => {
+        impl<$generic, const $size: usize> $trait for $struct<$generic, $size>
         where
-            $generic: $trait<Output = $generic> + Copy + Float,
+            $generic: $trait<Output = $generic> + Float + Copy + Display + FromStr,
+            <T as FromStr>::Err: std::fmt::Debug 
         {
             type Output = Self;
 
             fn $func(self) -> Self::Output {
-                Self {
-                    x: $op self.x,
-                    y: $op self.y,
+                let mut result = [self[0]; $size];
+                for i in 0..$size {
+                    result[i] = $op self[i];
                 }
+                Self::init(result)
             }
         }
     };
 }
 
 #[macro_export]
-macro_rules! impl_operator_inplace_2 {
-    ($struct:ident<$generic:ident>, $trait:ident, $func:ident, $op:tt) => {
-        impl<$generic> $trait for $struct<$generic>
+macro_rules! impl_operator_inplace {
+    ($struct:ident<$generic:ident, const $size:ident: usize>, $trait:ident, $func:ident, $op:tt) => {
+        impl<$generic, const $size: usize> $trait for $struct<$generic, $size>
         where
-            $generic: std::ops::$trait + Copy + Float,
+            $generic: std::ops::$trait + Float + Copy + Display + FromStr,
+            <T as FromStr>::Err: std::fmt::Debug 
         {
             fn $func(&mut self, rhs: Self) {
-                self.x $op rhs.x;
-                self.y $op rhs.y;
-            }
-        }
-    };
-}
-
-#[macro_export]
-macro_rules! impl_operator_3 {
-    ($struct:ident<$generic:ident>, $trait:ident, $func:ident, $op:tt, $opt:ident<$generic_op:ident>) => {
-        impl<$generic> $trait for $struct<$generic>
-        where
-            $generic: $trait<Output = $generic> + Copy + Float,
-        {
-            type Output = $opt<$generic_op>;
-
-            fn $func(self, rhs: Self) -> Self::Output {
-                $opt::<$generic_op> {
-                    x: self.x $op rhs.x,
-                    y: self.y $op rhs.y,
-                    z: self.z $op rhs.z,
+                for i in 0..$size {
+                    self[i] $op rhs[i];
                 }
-            }
-        }
-    };
-}
-
-#[macro_export]
-macro_rules! impl_operator_unary_3 {
-    ($struct:ident<$generic:ident>, $trait:ident, $func:ident, $op:tt) => {
-        impl<$generic> $trait for $struct<$generic>
-        where
-            $generic: $trait<Output = $generic> + Copy + Float,
-        {
-            type Output = Self;
-
-            fn $func(self) -> Self::Output {
-                Self {
-                    x: $op self.x,
-                    y: $op self.y,
-                    z: $op self.z,
-                }
-            }
-        }
-    };
-}
-
-#[macro_export]
-macro_rules! impl_operator_inplace_3 {
-    ($struct:ident<$generic:ident>, $trait:ident, $func:ident, $op:tt) => {
-        impl<$generic> $trait for $struct<$generic>
-        where
-            $generic: std::ops::$trait + Copy + Float,
-        {
-            fn $func(&mut self, rhs: Self) {
-                self.x $op rhs.x;
-                self.y $op rhs.y;
-                self.z $op rhs.z;
             }
         }
     };
@@ -119,9 +69,6 @@ macro_rules! impl_operator_inplace_3 {
 
 
 pub use register_struct;
-pub use impl_operator_2;
-pub use impl_operator_3;
-pub use impl_operator_unary_2;
-pub use impl_operator_unary_3;
-pub use impl_operator_inplace_2;
-pub use impl_operator_inplace_3;
+pub use impl_operator;
+pub use impl_operator_unary;
+pub use impl_operator_inplace;
