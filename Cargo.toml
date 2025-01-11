@@ -8,4 +8,4 @@ lazy_static = "1.4"
 ctor = "0.1"
 quick-xml = "0.37.2"
 num-traits = "0.2"
-derive_more = { version = "1", features = ["index", "index_mut", "add"] }
+derive_more = { version = "1", features = ["index", "index_mut"] }

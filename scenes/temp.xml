@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scene>
-    <!-- <sphere>
+    <sphere>
         <float name="radius" value="0.69"/>
+        <float name="z_min" value="-0.25"/>
     </sphere>
 
     <sphere>
-    </sphere> -->
+    </sphere>
     
     <!-- <camera type="orthographic">
         <point name="eye" value="0.0, 0.0, -5.0"/>

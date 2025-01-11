@@ -35,3 +35,5 @@ pub fn indent(input: &str, spaces: usize) -> String {
 
 pub const EPSILON: f32 = 0.0001;
 pub const INFINITY: f32 = f32::INFINITY;
+pub const M_PI: f32 = 3.14159265359;
+pub const M_INV_PI: f32 = 0.31830988618;

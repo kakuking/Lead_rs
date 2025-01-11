@@ -1,8 +1,11 @@
-use std::ops::{Index, IndexMut};
+// use std::ops::{Index, IndexMut};
 use crate::common::*;
+use derive_more::{Index, IndexMut};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Index, IndexMut)]
 pub struct Matrix4x4 {
+    #[index]
+    #[index_mut]
     pub m: Vec<Vec<f32>>
 }
 
@@ -128,19 +131,3 @@ impl Matrix4x4 {
         ret
     }
 }
-
-impl Index<usize> for Matrix4x4 {
-    type Output = Vec<f32>;
-
-    fn index(&self, index: usize) -> &Self::Output {
-        &self.m[index]
-    }
-}
-
-// Implement IndexMut for mutable access
-impl IndexMut<usize> for Matrix4x4 {
-    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
-        &mut self.m[index]
-    }
-}
-

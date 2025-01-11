@@ -3,8 +3,8 @@ use crate::common::*;
 
 pub trait Shape: LeadObjectTrait{
     // First the datat types we need
-    fn object_to_world(&self) -> Rc<Transform>;
-    fn world_to_object(&self) -> Rc<Transform>;
+    fn object_to_world(&self) -> Transform;
+    fn world_to_object(&self) -> Transform;
     fn reverse_orientation(&self) -> bool;
     fn transform_swaps_handedness(&self) -> bool;
 
@@ -18,10 +18,10 @@ pub trait Shape: LeadObjectTrait{
         self.intersect(ray, &mut t_hit, &mut its)
     }
     fn area(&self) -> f32;
-    fn sample_u(&self, u: &Point2f) -> dyn Interaction;
-    fn pdf(&self, _its: &dyn Interaction) -> f32 {
+    fn sample_u(&self, u: &Point2f) -> Box<dyn Interaction>;
+    fn pdf(&self, _its: &Box<dyn Interaction>) -> f32 {
         1.0 / self.area()
     }
-    fn sample(&self, _reference: &dyn Interaction, u: &Point2f) -> dyn Interaction;
-    fn pdf_wi(&self, reference: &dyn Interaction, wi: &Vector3f) -> f32;
+    fn sample(&self, _reference: &Box<dyn Interaction>, u: &Point2f) -> Box<dyn Interaction>;
+    fn pdf_wi(&self, reference: &Box<dyn Interaction>, wi: &Vector3f) -> f32;
 }

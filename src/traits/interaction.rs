@@ -38,7 +38,7 @@ pub trait Interaction {
         self.spawn_ray(&d)
     }
 
-    fn spawn_ray_to_interaction(&self, it: &dyn Interaction) -> Ray {
+    fn spawn_ray_to_interaction(&self, it: &Box<dyn Interaction>) -> Ray {
         let o = self.p();
         let d = it.p() - o;
 

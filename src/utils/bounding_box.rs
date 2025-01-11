@@ -12,6 +12,7 @@ where T: Float + Copy
     pub p_max: Point<T, 2usize>,
 }
 
+#[derive(Debug, Clone)]
 pub struct Bounds3<T> 
 where T: Float + Copy
 {
@@ -84,6 +85,14 @@ impl<T> Bounds2<T>
             o[1] = o.y() / self.p_max.y() - self.p_min.y();
         }
         o
+    }
+
+    pub fn to_string(&self) -> String {
+        format!(
+            "[\n  p_min: {}\n  p_max: {}\n]",
+            self.p_min.to_string(),
+            self.p_max.to_string()
+        )
     }
 }
 
@@ -267,6 +276,14 @@ impl<T> Bounds3<T>
     // pub fn intersect_p_inv(&self, ray: &Ray, inv_dir: &Vector3f, dir_is_neg: Vec<usize>) -> bool {
     //     let t_min = (self)
     // }
+
+    pub fn to_string(&self) -> String {
+        format!(
+            "[\n  p_min: {}\n  p_max: {}\n]",
+            self.p_min.to_string(),
+            self.p_max.to_string()
+        )
+    }
 }
 
 pub type Bounds2i = Bounds2<i32>;

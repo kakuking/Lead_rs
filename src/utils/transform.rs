@@ -5,9 +5,12 @@ use std::fmt::Display;
 use std::str::FromStr;
 use std::ops::Mul;
 use num_traits::Float;
+use derive_more::{Index, IndexMut};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Index, IndexMut)]
 pub struct Transform{
+    #[index]
+    #[index_mut]
     pub m: Matrix4x4,
     pub m_inv: Matrix4x4
 }
@@ -176,16 +179,26 @@ impl Transform {
 
         det < 0.0
     }
+
+    pub fn to_string(&self) -> String {
+        format!(
+            "[{}, {}, {}, {}]\n[{}, {}, {}, {}]\n[{}, {}, {}, {}]\n[{}, {}, {}, {}]",
+            self.m[0][0], self.m[0][1], self.m[0][2], self.m[0][3],
+            self.m[1][0], self.m[1][1], self.m[1][2], self.m[1][3],
+            self.m[2][0], self.m[2][1], self.m[2][2], self.m[2][3],
+            self.m[0][0], self.m[0][1], self.m[0][2], self.m[0][3]
+        )
+    }
 }
 
-impl<T> Mul<Point<T, 3usize>> for &Transform 
+impl<T, const N: usize> Mul<Point<T, N>> for &Transform 
     where
     T: Mul<Output = T> + Float + Copy + FromStr + Display, 
     <T as FromStr>::Err: std::fmt::Debug 
 {
-    type Output = Point<T, 3usize>;
+    type Output = Point<T, N>;
 
-    fn mul(self, p: Point<T, 3usize>) -> Self::Output {
+    fn mul(self, p: Point<T, N>) -> Self::Output {
         let x = p.x();
         let y = p.y();
         let z = p.z();
@@ -194,26 +207,29 @@ impl<T> Mul<Point<T, 3usize>> for &Transform
         let yp = T::from(self.m[1][0]).unwrap()*x + T::from(self.m[1][1]).unwrap()*y + T::from(self.m[1][2]).unwrap()*z + T::from(self.m[1][3]).unwrap();
         let zp = T::from(self.m[2][0]).unwrap()*x + T::from(self.m[2][1]).unwrap()*y + T::from(self.m[2][2]).unwrap()*z + T::from(self.m[2][3]).unwrap();
         let wp = T::from(self.m[3][0]).unwrap()*x + T::from(self.m[3][1]).unwrap()*y + T::from(self.m[3][2]).unwrap()*z + T::from(self.m[3][3]).unwrap();
+        let mut direction = [T::zero(); N];
+        direction[0] = xp;
+        direction[1] = yp;
+        direction[2] = zp;
         if wp == T::from(1.0).unwrap() {
-            return Point::<T, 3usize>::init(
-                [xp, yp, zp]
-            );
+            return Point::<T, N>::init(direction);
         }
+        direction[0] = direction[0] / wp;
+        direction[1] = direction[1] / wp;
+        direction[2] = direction[2] / wp;
 
-        return Point::<T, 3usize>::init(
-            [xp/wp, yp/wp, zp/wp]
-        );
+        return Point::<T, N>::init(direction);
     }
 }
 
-impl<T> Mul<Vector<T, 3usize>> for &Transform 
+impl<T, const N: usize> Mul<Vector<T, N>> for &Transform 
     where
     T: Mul<Output = T> + Float + Copy + FromStr + Display, 
     <T as FromStr>::Err: std::fmt::Debug 
 {
-    type Output = Vector<T, 3usize>;
+    type Output = Vector<T, N>;
 
-    fn mul(self, p: Vector<T, 3usize>) -> Self::Output {
+    fn mul(self, p: Vector<T, N>) -> Self::Output {
         let x = p.x();
         let y = p.y();
         let z = p.z();
@@ -221,8 +237,12 @@ impl<T> Mul<Vector<T, 3usize>> for &Transform
         let xp = T::from(self.m[0][0]).unwrap()*x + T::from(self.m[0][1]).unwrap()*y + T::from(self.m[0][2]).unwrap()*z;
         let yp = T::from(self.m[1][0]).unwrap()*x + T::from(self.m[1][1]).unwrap()*y + T::from(self.m[1][2]).unwrap()*z;
         let zp = T::from(self.m[2][0]).unwrap()*x + T::from(self.m[2][1]).unwrap()*y + T::from(self.m[2][2]).unwrap()*z;
-
-        Vector::<T, 3usize>::init([xp, yp, zp])
+        
+        let mut direction = [T::zero(); N];
+        direction[0] = xp;
+        direction[1] = yp;
+        direction[2] = zp;
+        Vector::<T, N>::init(direction)
     }
 }
 
@@ -268,7 +288,7 @@ impl Mul<Bounds3f> for &Transform {
     }
 }
 
-impl Mul for &Transform {
+impl Mul for Transform {
     type Output = Transform;
 
     fn mul(self, rhs: Self) -> Self::Output {
