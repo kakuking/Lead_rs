@@ -216,6 +216,15 @@ impl<T, const N: usize> Point<T, N>
     pub fn equal(p1: &Self, p2: &Self) -> bool {
         p1.coordinates == p2.coordinates
     }
+
+    pub fn dot(p1: &Self, p2: &Self) -> T {
+        let mut ret = T::zero();
+        for i in 0..N {
+            ret = ret + p1[i]*p2[i];
+        }
+
+        ret
+    }
 }
 
 impl<T, const N: usize> Mul<T> for Point<T, N>

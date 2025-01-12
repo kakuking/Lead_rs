@@ -73,8 +73,75 @@ impl Shape for Sphere {
         Box::new(SurfaceInteraction::new())
     }
 
-    fn intersect(&self, _ray: &Ray, _t_hit: &mut f32, _its:  &mut SurfaceInteraction) -> bool {
-        false
+    fn intersect(&self, ray: &Ray, t_hit: &mut f32, _its:  &mut SurfaceInteraction) -> bool {
+        let phi: f32;
+        let p_hit: Point3f;
+
+        let o_obj: Point3f = &self.world_to_object() * ray.o;
+        let d_obj: Vector3f = &self.world_to_object() * ray.d;
+
+        let d_sqr = Vector3f::dot(&d_obj, &d_obj);
+        let o_sqr = o_obj.x()*o_obj.x() + o_obj.y()*o_obj.y() + o_obj.z()*o_obj.z();
+        let c_sqr = 0f32;   // of center
+
+        let oc = 0f32;  // o dot center
+        let r2 = self.radius * self.radius;
+        let o_minus_c: Vector3f = o_obj - Point3f::new();
+        let d_dot_o_minus_c = Vector3f::dot(&o_minus_c, &d_obj);
+
+        let a = d_sqr;
+        let b = 2f32*d_dot_o_minus_c;
+        let c = c_sqr + o_sqr - 2f32*oc - r2;
+        let det = b*b - 4f32*a*c;
+
+        if det < 0f32 {
+            return false;
+        }
+
+        let root_det = det.sqrt();
+
+        let t_less = 0.5 * (-b - root_det) / a;
+        let t_more = 0.5 * (-b + root_det) / a;
+
+        // its outside acceptable range
+        if t_more < ray.t_min || t_less > ray.t_max {
+            return false;
+        }
+
+        let mut flag = false;
+
+        if t_more >= ray.t_min && t_more <= ray.t_max {
+            *t_hit = t_more;
+            flag = true;
+        }
+
+        if t_less >= ray.t_min && t_less <= ray.t_max {
+            *t_hit = t_less;
+            flag = true;
+        }
+
+        if !flag {
+            return false;
+        }
+
+        let p = o_obj + d_obj * (*t_hit);
+
+        let theta = (p.z() / self.radius).acos();
+        let phi = p.y().signum() * (p.x() / (p.x()*p.x() + p.y()*p.y()).sqrt()).acos();
+
+        // Check if within bounds
+        if phi > self.phi_max || theta > self.theta_max || theta < self.theta_min {
+            return false;
+        }
+
+        let u: f32 = phi / self.phi_max;
+        let v: f32 = (theta - self.theta_min) / (self.theta_max - self.theta_min);
+
+        // let z_radius = 
+
+
+
+        true
     }
 
     fn intersect_p(&self, _ray: &Ray) -> bool {
@@ -116,6 +183,15 @@ impl Sphere{
             bounding_box,
             reverse_orientation: prop_list.get_bool("reverse_orientation", false)
         }
+    }
+
+    pub fn calculate_uv(u: &mut f32, v: &mut f32, p: Point3f) {
+        let theta = p.x().atan2(p.y()) + M_PI;
+        let length = Point3f::dot(&p, &p);
+        let phi = (p.z()/length).acos();
+
+        *u = theta / (2.0*M_PI);
+        *v = phi * M_INV_PI;
     }
 }
 
