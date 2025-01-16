@@ -18,8 +18,8 @@ pub struct Transform{
 impl Transform {
     pub fn new() -> Self {
         Self {
-            m: Matrix4x4::new(),
-            m_inv: Matrix4x4::new()
+            m: Matrix4x4::identity(),
+            m_inv: Matrix4x4::identity()
         }
     }
 
@@ -74,7 +74,7 @@ impl Transform {
         let cos_theta: f32 = theta.to_radians().cos();
         let sin_theta: f32 = theta.to_radians().sin();
 
-        let mut mat: Matrix4x4 = Matrix4x4::new();
+        let mut mat: Matrix4x4 = Matrix4x4::identity();
 
         mat[0][0] = a.x()*a.x() + (1.0 - a.x()*a.x()) * cos_theta;
         mat[0][1] = a.x()*a.y()*(1.0 - cos_theta) - a.z()*sin_theta;
@@ -98,7 +98,7 @@ impl Transform {
     }
 
     pub fn look_at(pos: &Point3f, look: &Point3f, up: &Vector3f) -> Self {
-        let mut m = Matrix4x4::new();
+        let mut m = Matrix4x4::identity();
 
         m[0][3] = pos.x();
         m[1][3] = pos.y();

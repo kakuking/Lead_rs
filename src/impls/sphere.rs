@@ -189,13 +189,16 @@ impl Sphere{
         &Point3f::init([radius, radius, z_max])
         );
 
+        let object_to_world = prop_list.get_transform();
+
         Sphere{
             radius,
             z_min, z_max,
             theta_min: (z_min / radius).acos().clamp(-1f32, 1f32),
             theta_max: (z_max / radius).acos().clamp(-1f32, 1f32),
             phi_max,
-            object_to_world: Transform::new(), world_to_object: Transform::new(),
+            world_to_object: object_to_world.inverse(),
+            object_to_world: object_to_world,
             bounding_box,
             reverse_orientation: prop_list.get_bool("reverse_orientation", false),
         }

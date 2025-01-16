@@ -11,6 +11,12 @@ pub struct Matrix4x4 {
 
 impl Matrix4x4 {
     pub fn new() -> Self {
+        Self {
+            m: vec![vec![0f32; 4]; 4]
+        }
+    }
+
+    pub fn identity() -> Self {
         let mut temp = Self {
             m: vec![vec![0f32; 4]; 4]
         };
