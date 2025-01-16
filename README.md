@@ -8,7 +8,7 @@ Current To-Do list -
 
 - [ ] Reach the point I left the original Lead Renderer at
 
-~~- [ ] Move away from Nori towards a more PBR-like implementation~~ (Since it is in Rust, the implementation is fundamentally different)
+- [x] ~~Move away from Nori towards a more PBR-like implementation~~ Since it is in Rust, the implementation is fundamentally different
 
 - [ ] Add a spectrum class
 
