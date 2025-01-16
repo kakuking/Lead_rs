@@ -13,9 +13,10 @@ pub struct SurfaceInteraction {
     pub shape: Option<Arc<dyn Shape>>, 
     pub shading: Shading,
     pub dpdx: Vector3f, pub dpdy: Vector3f,
-    pub dudx: f32, pub dvdx: f32, pub dudy: f32, pub dvdy: f32
+    pub dudx: f32, pub dvdx: f32, pub dudy: f32, pub dvdy: f32,
 
     // TODO add primitive, BSDF, BSSRDF
+    pub primitive: Option<Arc<dyn Primitive>>,
 }
 
 impl Interaction for SurfaceInteraction {
@@ -40,7 +41,8 @@ impl SurfaceInteraction {
             shape: None,
             shading: Shading::new(),
             dpdx: Vector3f::new(), dpdy: Vector3f::new(),
-            dudx: 0f32, dudy: 0f32, dvdx: 0f32, dvdy: 0f32
+            dudx: 0f32, dudy: 0f32, dvdx: 0f32, dvdy: 0f32,
+            primitive: None
         }
     }
 
@@ -80,6 +82,10 @@ impl SurfaceInteraction {
 
     pub fn set_shape(&mut self, shape: Arc<dyn Shape>) {
         self.shape = Some(shape);
+    }
+
+    pub fn set_primitive(&mut self, primitive: Arc<dyn Primitive>) {
+        self.primitive = Some(primitive);
     }
 
     pub fn set_shading_geometry(&mut self, dpdus: Vector3f, dpdvs: Vector3f, dndus: Normal3f, dndvs: Normal3f, orientation_is_authority: bool) {

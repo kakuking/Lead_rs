@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::sync::Arc;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Medium {
@@ -7,8 +7,8 @@ pub struct Medium {
 
 #[derive(Debug, Clone)]
 pub struct MediumInterface {
-    pub inside: Rc<Medium>,
-    pub outside: Rc<Medium>
+    pub inside: Arc<Medium>,
+    pub outside: Arc<Medium>
 }
 
 impl Medium {
@@ -20,8 +20,22 @@ impl Medium {
 impl MediumInterface {
     pub fn new() -> Self {
         Self {
-            inside: Rc::<Medium>::new(Medium::new()),
-            outside: Rc::<Medium>::new(Medium::new())
+            inside: Arc::<Medium>::new(Medium::new()),
+            outside: Arc::<Medium>::new(Medium::new())
+        }
+    }
+
+    pub fn init(inside: Arc<Medium>, outside: Arc<Medium>) -> Self {
+        Self {
+            inside,
+            outside
+        }
+    }
+
+    pub fn init_one(medium: Arc<Medium>) -> Self {
+        Self {
+            inside: medium.clone(),
+            outside: medium
         }
     }
 

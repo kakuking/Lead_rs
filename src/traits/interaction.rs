@@ -49,14 +49,18 @@ pub trait Interaction {
         !self.is_surface_interaction()
     }
 
-    fn get_medium(&self) -> Rc<Medium> {
+    fn get_medium(&self) -> Arc<Medium> {
         assert!(&self.medium_interface().is_homogeneous(), "Inside and outside media are not the same, provide a reference vector!");
 
         self.medium_interface().inside.clone()
     }
 
-    fn get_medium_vector(&self, v: &Vector3f) -> Rc<Medium> {
-        return if Normal3f::dot(&self.n(), &v) > 0.0 {self.medium_interface().inside.clone()} else {self.medium_interface().outside.clone()}
+    fn get_medium_vector(&self, v: &Vector3f) -> Arc<Medium> {
+        if Normal3f::dot(&self.n(), &v) > 0.0 {
+            return self.medium_interface().inside.clone();
+        } else {
+            return self.medium_interface().outside.clone();
+        }
     }
 }
 
