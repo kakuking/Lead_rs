@@ -10,6 +10,7 @@ pub trait Shape: LeadObjectTrait{
 
     fn get_object_bounds(&self) -> Bounds3f;
     fn get_world_bounds(&self) -> Bounds3f;
+    //After calling intersect make sure to set which shape it is in the its
     fn intersect(&self, ray: &Ray, t_hit: &mut f32, its:  &mut SurfaceInteraction) -> bool;
     fn intersect_p(&self, ray: &Ray) -> bool {
         let mut t_hit: f32 = INFINITY;

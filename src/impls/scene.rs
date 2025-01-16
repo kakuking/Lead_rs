@@ -1,14 +1,14 @@
 use crate::common::*;
 
 pub struct Scene{
-    shapes: Vec<Box<dyn Shape>>,
+    shapes: Vec<Arc<dyn Shape>>,
 }
 
 // Constructor
 fn create_scene(prop_list: PropertyList) -> LeadObject {
     let mut scene = Scene::new();
     scene.init(prop_list);
-    LeadObject::Scene(Box::new(scene))
+    LeadObject::Scene(Arc::new(scene))
 }
 
 // imp lead object

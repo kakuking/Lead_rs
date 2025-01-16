@@ -12,7 +12,7 @@ pub struct Sphere {
 
 fn create_sphere(prop_list: PropertyList) -> LeadObject {
     let sphere = Sphere::new(prop_list);
-    LeadObject::Shape(Box::new(sphere))
+    LeadObject::Shape(Arc::new(sphere))
 }
 
 impl Shape for Sphere {
@@ -73,10 +73,7 @@ impl Shape for Sphere {
         Box::new(SurfaceInteraction::new())
     }
 
-    fn intersect(&self, ray: &Ray, t_hit: &mut f32, _its:  &mut SurfaceInteraction) -> bool {
-        let phi: f32;
-        let p_hit: Point3f;
-
+    fn intersect(&self, ray: &Ray, t_hit: &mut f32, its:  &mut SurfaceInteraction) -> bool {
         let o_obj: Point3f = &self.world_to_object() * ray.o;
         let d_obj: Vector3f = &self.world_to_object() * ray.d;
 
@@ -92,16 +89,15 @@ impl Shape for Sphere {
         let a = d_sqr;
         let b = 2f32*d_dot_o_minus_c;
         let c = c_sqr + o_sqr - 2f32*oc - r2;
-        let det = b*b - 4f32*a*c;
-
-        if det < 0f32 {
+        
+        let mut r_1: Option<f32> = None;
+        let mut r_2: Option<f32> = None;
+        if !Solver::quadratic(a, b, c, &mut r_1, &mut r_2) {
             return false;
         }
 
-        let root_det = det.sqrt();
-
-        let t_less = 0.5 * (-b - root_det) / a;
-        let t_more = 0.5 * (-b + root_det) / a;
+        let t_less = r_1.unwrap_or(-INFINITY);
+        let t_more = r_2.unwrap_or(-INFINITY);
 
         // its outside acceptable range
         if t_more < ray.t_min || t_less > ray.t_max {
@@ -136,10 +132,30 @@ impl Shape for Sphere {
 
         let u: f32 = phi / self.phi_max;
         let v: f32 = (theta - self.theta_min) / (self.theta_max - self.theta_min);
+        let uv = Point2f::init([u, v]);
+        
+        let dpdu = Vector3f::init([-self.phi_max * p.y(), self.phi_max * p.x(), 0f32]);
+        let dpdv = Vector3f::init([p.z() * phi.cos(), p.z() * phi.sin(), -self.radius * theta.sin()]) * (self.theta_max - self.theta_min);
 
-        // let z_radius = 
+        let d2_pduu = Vector3f::init([p.x(), p.y(), 0f32]) * -self.phi_max * self.phi_max;
+        let d2_pduv = Vector3f::init([-phi.sin(), phi.cos(), 0.0]) * -(self.theta_max - self.theta_min) * p.z() * self.phi_max;
+        let d2_pdvv = Vector3f::init([p.x(), p.y(), p.z()]) * -(self.theta_max - self.theta_min)*(self.theta_max - self.theta_min);
+        
+        let big_e = Vector3f::dot(&dpdu, &dpdu);
+        let big_f = Vector3f::dot(&dpdu, &dpdv);
+        let big_g = Vector3f::dot(&dpdv, &dpdv);
+        let big_n = Vector3f::normalize(&Vector3f::cross(&dpdu, &dpdv));
+        let e = Vector3f::dot(&big_n, &d2_pduu);
+        let f = Vector3f::dot(&big_n, &d2_pduv);
+        let g = Vector3f::dot(&big_n, &d2_pdvv);
 
+        let inv_egf2 = 1.0 / (big_e*big_g - big_f*big_f);
+        let dndu = Normal3f::init_vector(&(dpdu * (f*big_f - e*big_g)*inv_egf2 + dpdv*(e*big_f - f*big_e)*inv_egf2));
+        let dndv = Normal3f::init_vector(&(dpdu * (g*big_f - f*big_g)*inv_egf2 + dpdv*(f*big_f - f*big_e)*inv_egf2));
 
+        let obj_its = SurfaceInteraction::init(p, uv, -ray.d, dpdu, dpdv, dndu, dndv, *t_hit);
+
+        *its = &self.object_to_world * &obj_its;
 
         true
     }
@@ -181,7 +197,7 @@ impl Sphere{
             phi_max,
             object_to_world: Transform::new(), world_to_object: Transform::new(),
             bounding_box,
-            reverse_orientation: prop_list.get_bool("reverse_orientation", false)
+            reverse_orientation: prop_list.get_bool("reverse_orientation", false),
         }
     }
 

@@ -1,6 +1,7 @@
 pub use lazy_static::lazy_static;
 pub use std::any::Any;
 pub use std::rc::Rc;
+pub use std::{cell::RefCell, sync::Arc};
 
 pub use crate::factory::{register_lead_object, create_lead_object};
 
@@ -20,6 +21,7 @@ pub use crate::utils::ray::{Ray, RayDifferential};
 pub use crate::utils::bounding_box::{Bounds2i, Bounds2f, Bounds3i, Bounds3f};
 pub use crate::utils::matrix::Matrix4x4;
 pub use crate::utils::transform::Transform;
+pub use crate::utils::solver::Solver;
 
 pub use crate::impls::scene::*;
 pub use crate::impls::interaction::*;

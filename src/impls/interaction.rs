@@ -10,7 +10,7 @@ pub struct SurfaceInteraction {
 
     pub uv: Point2f,
     pub dpdu: Vector3f, pub dpdv: Vector3f, pub dndu: Normal3f, pub dndv: Normal3f,
-    pub shape: Option<Rc<dyn Shape>>, 
+    pub shape: Option<Arc<dyn Shape>>, 
     pub shading: Shading,
     pub dpdx: Vector3f, pub dpdy: Vector3f,
     pub dudx: f32, pub dvdx: f32, pub dudy: f32, pub dvdy: f32
@@ -45,7 +45,7 @@ impl SurfaceInteraction {
     }
 
 
-    pub fn init(p: Point3f, uv: Point2f, wo: Vector3f, dpdu: Vector3f, dpdv: Vector3f, dndu: Normal3f, dndv: Normal3f, t: f32, shape: Rc<dyn Shape>) -> Self {
+    pub fn init(p: Point3f, uv: Point2f, wo: Vector3f, dpdu: Vector3f, dpdv: Vector3f, dndu: Normal3f, dndv: Normal3f, t: f32) -> Self {
         let mut ret = Self::new();
         let c_p = Vector3f::cross(&dpdu, &dpdv);
         let n = Normal3f::normalize(&Normal3f::init([c_p.x(), c_p.y(), c_p.z()]));
@@ -61,7 +61,7 @@ impl SurfaceInteraction {
         ret.dpdv = dpdv;
         ret.dndu = dndu;
         ret.dndv = dndv;
-        ret.shape = Some(shape);
+        ret.shape = None;
         ret.shading.n = n;
         ret.shading.dpdu = dpdu;
         ret.shading.dpdv = dpdv;
@@ -76,6 +76,10 @@ impl SurfaceInteraction {
         }
 
         ret
+    }
+
+    pub fn set_shape(&mut self, shape: Arc<dyn Shape>) {
+        self.shape = Some(shape);
     }
 
     pub fn set_shading_geometry(&mut self, dpdus: Vector3f, dpdvs: Vector3f, dndus: Normal3f, dndvs: Normal3f, orientation_is_authority: bool) {

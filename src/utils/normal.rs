@@ -47,6 +47,16 @@ impl<T, const N: usize> Normal<T, N>
         }
     }
 
+    pub fn init_vector(other: &Vector<T, N>) -> Self {
+        let mut direction = [T::zero(); N];
+        for i in 0..N {
+            direction[i] = other[i];
+        }
+        Self {
+            direction
+        }
+    }
+
     pub fn x(&self) -> T {
         self.direction[0]
     }

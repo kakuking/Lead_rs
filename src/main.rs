@@ -7,7 +7,7 @@ pub mod common;
 pub mod factory;
 pub mod parser;
 
-use common::{LeadObject, Point2f};
+use common::LeadObject;
 use parser::Parser;
 
 fn main() {
@@ -22,8 +22,5 @@ fn main() {
         _ => panic!("Couldnt find a scene!"),
     };
 
-    let temp = Point2f::init([1.0, 2.0]);
-    let temp2 = Point2f::init([1.0, 1.0]);
-    let temp3 = temp - temp2;
-    println!("{}, {}", main_scene.to_string(), temp3.to_string());
+    println!("{}", main_scene.to_string());
 }
