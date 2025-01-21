@@ -7,6 +7,7 @@ pub trait Primitive{
     fn get_area_light(&self) -> Option<Arc<dyn AreaLight>>;
     fn get_material(&self) -> Option<Arc<dyn Material>>;
     fn compute_scattering_functions(&self, its: &SurfaceInteraction, mode: TransportMode, allow_multiple_lobes: bool);
+    fn shape(&self) -> Option<Arc<dyn Shape>>;
 }
 
 pub struct GeometricPrimitive {
@@ -53,6 +54,10 @@ impl Primitive for GeometricPrimitive{
     // TODO - this....................
     fn compute_scattering_functions(&self, _its: &SurfaceInteraction, _mode: TransportMode, _allow_multiple_lobes: bool) {
         
+    }
+
+    fn shape(&self) -> Option<Arc<dyn Shape>> {
+        Some(self.shape.clone())
     }
 }
 

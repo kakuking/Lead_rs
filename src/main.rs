@@ -12,10 +12,11 @@ use parser::Parser;
 
 fn main() {
     let parser = Parser::new();
-    let main_scene_obj = match parser.parse_file("./scenes/temp.xml"){
+    let mut main_scene_obj = match parser.parse_file("./scenes/temp.xml"){
         Ok(root_node) => root_node,
         Err(e) => panic!("Ran into error {:?}", e)
     };
+    main_scene_obj.activate();
 
     let main_scene  = match main_scene_obj {
         LeadObject::Scene(scene) => scene,

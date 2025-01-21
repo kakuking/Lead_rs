@@ -216,7 +216,7 @@ impl LeadObjectTrait for Sphere {
     fn activate(&mut self) { }
 
     fn to_string(&self) -> String {
-        format!("sphere: [\n  radius: {}\n  z_min: {}\n  z_max: {}\n  phi_max: {}\n  bounding_box: \n{}\n  object_to_world: \n{}\n]", self.radius, self.z_min, self.z_max, self.phi_max, indent(&self.bounding_box.to_string(), 4), indent(&self.object_to_world().to_string(), 4))
+        format!("sphere: [\n  radius: {}\n  z_min: {}\n  z_max: {}\n  phi_max: {}\n  bounding_box: \n{}\n  object_to_world: \n{}\n]", self.radius, self.z_min, self.z_max, self.phi_max, indent(&(self.get_world_bounds()).to_string(), 4), indent(&self.object_to_world().to_string(), 4))
     }
 }
 

@@ -1,8 +1,8 @@
-use crate::common::*;
+use crate::{common::*, utils::primitive::GeometricPrimitive};
 
 pub struct Scene{
     shapes: Vec<Arc<dyn Shape>>,
-    _accel: Option<Arc<dyn Aggregate>>,
+    accel: Arc<dyn Aggregate>,
 }
 
 // Constructor
@@ -17,7 +17,16 @@ impl LeadObjectTrait for Scene {
     fn init(&mut self, _prop_list: PropertyList) { }
 
     fn activate(&mut self) {
-        
+        let mut primitives: Vec<Arc<dyn Primitive>> = Vec::new();
+
+        while let Some(cur_shape) = self.shapes.pop() {
+            let prim: GeometricPrimitive = GeometricPrimitive::init_shape(cur_shape);
+            primitives.push(Arc::new(prim));
+        }
+
+        let mut bvh: BVHAccel = BVHAccel::new();
+        bvh.create(primitives, 120, SplitMethod::SAH);
+        self.accel = Arc::new(bvh);
     }
 
     fn add_child(&mut self, child: LeadObject) {
@@ -29,11 +38,10 @@ impl LeadObjectTrait for Scene {
 
     fn to_string(&self) -> String {
         let mut shapes_part = String::new();
-        for shape in self.shapes.iter() {
-            shapes_part += &shape.to_string();
+        for prim in self.accel.primitives() {
+            shapes_part += &prim.shape().unwrap().to_string();
             shapes_part += "\n";
         };
-        
         
         format!(
             "Scene[\n  shapes: {{\n{}\n  }}\n]",
@@ -42,11 +50,45 @@ impl LeadObjectTrait for Scene {
     }
 }
 
+impl SceneTrait for Scene {
+
+}
+
+impl Primitive for Scene {
+    fn intersect(&self, ray: &Ray, its: &mut SurfaceInteraction) -> bool {
+        self.accel.intersect(ray, its)
+    }
+
+    fn intersect_p(&self, ray: &Ray) -> bool {
+        self.accel.intersect_p(ray)
+    }
+
+    fn compute_scattering_functions(&self, _its: &SurfaceInteraction, _mode: TransportMode, _allow_multiple_lobes: bool) {
+        panic!("Not implemented yet!");
+    }
+
+    fn get_area_light(&self) -> Option<Arc<dyn AreaLight>> {
+        panic!("Not implemented yet!");
+    }
+
+    fn get_material(&self) -> Option<Arc<dyn Material>> {
+        panic!("Not implemented yet!");
+    }
+
+    fn world_bound(&self) -> Bounds3f {
+        panic!("Not implemented yet!");
+    }
+
+    fn shape(&self) -> Option<Arc<dyn Shape>> {
+        None
+    }
+}
+
 impl Scene{
     pub fn new() -> Self {
         Scene {
             shapes: Vec::new(),
-            _accel: None
+            accel: Arc::new(BVHAccel::new())
         }
     }
 

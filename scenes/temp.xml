@@ -2,11 +2,9 @@
 <scene>
     <sphere>
         <float name="radius" value="0.69"/>
-        <float name="z_min" value="-0.25"/>
+        <!-- <float name="z_min" value="-0.25"/> -->
 
-        <!-- <scale value="0.5, 1.5, 2.5"/> -->
-        <translate value="0.69, 0.79, 0.89"/>
-        <rotate angle="90" axis="0, 0, 1"/>
+        <translate value="10, 10, 10"/>
     </sphere>
 
     <!-- <sphere>

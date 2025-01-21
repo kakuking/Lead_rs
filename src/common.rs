@@ -13,6 +13,7 @@ pub use crate::traits::interaction::{Interaction, Shading};
 pub use crate::traits::arealight::AreaLight;
 pub use crate::traits::material::Material;
 pub use crate::traits::integrator::TransportMode;
+pub use crate::traits::scene::SceneTrait;
 
 pub use crate::macros::*;
 

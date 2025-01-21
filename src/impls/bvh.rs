@@ -99,36 +99,13 @@ pub struct BVHAccel {
 }
 
 impl BVHAccel {
-    pub fn new(primitives: Vec<Arc<dyn Primitive>>, max_primitives_in_node: u32, split_method: SplitMethod) -> Self {
-        let mut ret: Self = Self{
-            primitives,
-            max_primitives_in_node: if max_primitives_in_node < 255 { max_primitives_in_node } else { 255u32 },
-            split_method,
+    pub fn new() -> Self {
+        Self {
+            primitives: Vec::new(),
+            max_primitives_in_node: 0,
+            split_method: SplitMethod::SAH,
             nodes: Vec::new()
-        };
-
-        let mut primitive_info: Vec<BVHPrimitiveInfo> = Vec::new();
-        for i in 0..(ret.primitives.len()) {
-            primitive_info.push(BVHPrimitiveInfo::new(i as u32, ret.primitives[i].world_bound()));
         }
-
-        let mut total_nodes = 0u32;
-        let mut ordered_primitives: Vec<Arc<dyn Primitive>> = Vec::new();
-
-        let root: Arc<BVHBuildNode> = ret.recursive_build(&mut primitive_info, 0, ret.primitives.len() as u32, &mut total_nodes, &mut ordered_primitives);
-
-        // TODO - Manipulation of primitives and adding SAH to recursive_build
-        ret.primitives = ordered_primitives;
-        let mut offset: usize = 0usize;
-
-        let max_bvh_nodes = 2 * ret.primitives.len() - 1;
-        ret.nodes.reserve(max_bvh_nodes);
-
-        ret.flatten_bvh_tree(&root, &mut offset);
-        
-        assert_eq!(total_nodes, offset as u32, "Not everything added to BVH!");
-
-        ret
     }
 
     fn recursive_build(&self, primitive_info: &mut Vec<BVHPrimitiveInfo>, start: u32, end: u32, total_nodes: &mut u32, ordered_primitives: &mut Vec<Arc<dyn Primitive>>) -> Arc<BVHBuildNode> {
@@ -359,20 +336,39 @@ impl BVHAccel {
         my_offset
     }
 
-    pub fn to_string(&self) -> String {
-        format!("Bounding volume heirarchy: [\n  max_primitives: {},\n  split_method: {},\n  num_primitives: {},\n  num_nodes: {}\n]", self.max_primitives_in_node, self.split_method.to_string(), self.primitives.len(), self.nodes.len())
-    }
-
-    // pub struct BVHAccel {
-    //     pub max_primitives_in_node: u32,
-    //     pub split_method: SplitMethod,
-    //     pub primitives: Vec<Arc<dyn Primitive>>,
-    //     nodes: Vec<Arc<LinearBVHNode>>,
-    // }
 }
 
 impl Aggregate for BVHAccel {
+    fn create(&mut self, primitives: Vec<Arc<dyn Primitive>>, max_primitives_in_node: u32, split_method: SplitMethod) {
+        self.primitives = primitives;
+        self.max_primitives_in_node = if max_primitives_in_node < 255 { max_primitives_in_node } else { 255u32 };
+        self.split_method = split_method;
 
+        let mut primitive_info: Vec<BVHPrimitiveInfo> = Vec::new();
+        for i in 0..(self.primitives.len()) {
+            primitive_info.push(BVHPrimitiveInfo::new(i as u32, self.primitives[i].world_bound()));
+        }
+
+        let mut total_nodes = 0u32;
+        let mut ordered_primitives: Vec<Arc<dyn Primitive>> = Vec::new();
+
+        let root: Arc<BVHBuildNode> = self.recursive_build(&mut primitive_info, 0, self.primitives.len() as u32, &mut total_nodes, &mut ordered_primitives);
+
+        // TODO - Manipulation of primitives and adding SAH to recursive_build
+        self.primitives = ordered_primitives;
+        let mut offset: usize = 0usize;
+
+        let max_bvh_nodes = 2 * self.primitives.len() - 1;
+        self.nodes.reserve(max_bvh_nodes);
+
+        self.flatten_bvh_tree(&root, &mut offset);
+        
+        assert_eq!(total_nodes, offset as u32, "Not everything added to BVH!");
+    }
+
+    fn primitives(&self) -> &Vec<Arc<dyn Primitive>> {
+        &self.primitives
+    }
 }
 
 impl Primitive for BVHAccel {
@@ -491,5 +487,9 @@ impl Primitive for BVHAccel {
     fn world_bound(&self) -> Bounds3f {
         // TODO - impl this as well
         self.primitives[0 as usize].world_bound()
+    }
+
+    fn shape(&self) -> Option<Arc<dyn Shape>> {
+        None
     }
 }
