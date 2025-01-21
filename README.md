@@ -6,13 +6,43 @@ I initially started this project in C++, but I quickly realized that rather than
 
 Current To-Do list -
 
-- [ ] Reach the point I left the original Lead Renderer at
-
 - [x] ~~Move away from Nori towards a more PBR-like implementation~~ Since it is in Rust, the implementation is fundamentally different
 
-- [ ] Add a spectrum class
+- [x] Add Geometry stuff (coordinate systems, vectors, points, rays, b boxes, transformations and interactions)
 
-- [ ] Convert renderer to spectrum based renderer rather than RGB-based
+- [ ] Add animated transformations
+
+- [x] Add basic Shape interface
+
+- [ ] Add ~~Sphere~~, Cylinders, Disks, Quadrics, **Triangle Meshes**, Curves, and Subdivision Surfaces
+
+- [ ] Add Primitives interface
+
+- [ ] Add aggregates ~~Bounding Volume Heirarchy~~, and Kd-Tree (maybe)
+
+- [ ] Add Spectra and Color stuff
+
+- [ ] Add Camera models
+
+- [ ] Add samplers and film
+
+- [ ] Add BxDFs
+
+- [ ] Add textures (procedural and images)
+
+- [ ] **Add Volumes!!!!!!**
+
+- [ ] Add Light sources
+
+- [ ] Create Direct integrator
+
+- [ ] Create recursive Path integrator
+
+- [ ] Create Volume Renderer
+
+- [ ] Create Bidirectional Renderer
+
+- [ ] Create Photon Mapping integrator (maybe)
 
 - [ ] Add parallelism
 
