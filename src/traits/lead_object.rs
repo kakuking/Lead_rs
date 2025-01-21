@@ -3,6 +3,7 @@ use crate::common::*;
 
 pub trait LeadObjectTrait {
     fn init(&mut self, prop_list: PropertyList);
+    fn activate(&mut self);
     fn to_string(&self) -> String;
     fn add_child(&mut self, child: LeadObject);
 }

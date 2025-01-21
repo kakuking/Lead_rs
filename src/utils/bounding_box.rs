@@ -12,7 +12,7 @@ where T: Float + Copy
     pub p_max: Point<T, 2usize>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub struct Bounds3<T> 
 where T: Float + Copy
 {
@@ -53,7 +53,7 @@ impl<T> Bounds2<T>
 
     pub fn area(&self) -> T {
         let d = self.diagonal();
-        d.x() * d.y()
+        (d.x() * d.y()).abs()
     }
 
     pub fn max_extent(&self) -> i32 {
@@ -93,6 +93,14 @@ impl<T> Bounds2<T>
             self.p_min.to_string(),
             self.p_max.to_string()
         )
+    }
+
+    pub fn get(&self, i: usize) -> Point<T, 2usize> {
+        match i {
+            0usize => {return  self.p_min;}
+            1usize => {return  self.p_max;}
+            _ => {panic!("Invalid index for bounding box!")}
+        }
     }
 }
 
@@ -273,9 +281,52 @@ impl<T> Bounds3<T>
         true
     }
 
-    // pub fn intersect_p_inv(&self, ray: &Ray, inv_dir: &Vector3f, dir_is_neg: Vec<usize>) -> bool {
-    //     let t_min = (self)
-    // }
+    pub fn intersect_inv_p(&self, ray: &Ray, inv_dir: &Vector<T, 3usize>, dir_is_neg: [i32; 3]) -> bool {
+        let bounds = self;  // `self` is a reference to Bounds3f
+        
+        // Check for ray intersection against slabs in X, Y, and Z directions
+        let x_min = bounds.get(dir_is_neg[0] as usize).x();
+        let x_max = bounds.get((1 - dir_is_neg[0]) as usize).x();
+        let y_min = bounds.get(dir_is_neg[1] as usize).y();
+        let y_max = bounds.get((1 - dir_is_neg[1]) as usize).y();
+    
+        let mut t_min = (x_min - T::from(ray.o.x()).unwrap()) * inv_dir.x();
+        let mut t_max = (x_max - T::from(ray.o.x()).unwrap()) * inv_dir.x();
+        let ty_min = (y_min - T::from(ray.o.y()).unwrap()) * inv_dir.y();
+        let ty_max = (y_max - T::from(ray.o.y()).unwrap()) * inv_dir.y();
+        
+        // Update tMax and tyMax to ensure robust bounds intersection
+        if t_min > ty_max || ty_min > t_max {
+            return false;
+        }
+        if ty_min > t_min {
+            t_min = ty_min;
+        }
+        if ty_max < t_max {
+            t_max = ty_max;
+        }
+        
+        // Check for ray intersection against slabs in the Z direction
+        let z_min = bounds.get(dir_is_neg[2] as usize).z();
+        let z_max = bounds.get((1 - dir_is_neg[2]) as usize).z();
+        
+        let tz_min = (z_min - T::from(ray.o.z()).unwrap()) * inv_dir.z();
+        let tz_max = (z_max - T::from(ray.o.z()).unwrap()) * inv_dir.z();
+        
+        // Update tzMax to ensure robust bounds intersection
+        if t_min > tz_max || tz_min > t_max {
+            return false;
+        }
+        if tz_min > t_min {
+            t_min = tz_min;
+        }
+        if tz_max < t_max {
+            t_max = tz_max;
+        }
+    
+        return t_min < T::from(ray.t_max).unwrap() && t_max > T::zero();
+    }
+    
 
     pub fn to_string(&self) -> String {
         format!(
@@ -283,6 +334,15 @@ impl<T> Bounds3<T>
             self.p_min.to_string(),
             self.p_max.to_string()
         )
+    }
+
+    
+    pub fn get(&self, i: usize) -> Point<T, 3usize> {
+        match i {
+            0usize => {return  self.p_min;}
+            1usize => {return  self.p_max;}
+            _ => {panic!("Invalid index for bounding box!")}
+        }
     }
 }
 

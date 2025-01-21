@@ -4,16 +4,16 @@ pub trait Primitive{
     fn world_bound(&self) -> Bounds3f;
     fn intersect(&self, ray: &Ray, its: &mut SurfaceInteraction) -> bool;
     fn intersect_p(&self, ray: &Ray) -> bool;
-    fn get_area_light(&self) -> Arc<dyn AreaLight>;
-    fn get_material(&self) -> Arc<dyn Material>;
+    fn get_area_light(&self) -> Option<Arc<dyn AreaLight>>;
+    fn get_material(&self) -> Option<Arc<dyn Material>>;
     fn compute_scattering_functions(&self, its: &SurfaceInteraction, mode: TransportMode, allow_multiple_lobes: bool);
 }
 
 pub struct GeometricPrimitive {
     pub shape: Arc<dyn Shape>,
-    pub material: Arc<dyn Material>,
-    pub arealight: Arc<dyn AreaLight>,
-    pub medium_interface: MediumInterface
+    pub material: Option<Arc<dyn Material>>,
+    pub arealight: Option<Arc<dyn AreaLight>>,
+    pub medium_interface: Option<MediumInterface>
 }
 
 impl Primitive for GeometricPrimitive{
@@ -36,12 +36,18 @@ impl Primitive for GeometricPrimitive{
         self.shape.intersect_p(ray)
     }
 
-    fn get_area_light(&self) -> Arc<dyn AreaLight> {
-        self.arealight.clone()
+    fn get_area_light(&self) -> Option<Arc<dyn AreaLight>> {
+        match &self.arealight {
+            Some(al) => { return Some(al.clone()); }
+            None => {return None;}
+        }
     }
 
-    fn get_material(&self) -> Arc<dyn Material> {
-        self.material.clone()
+    fn get_material(&self) -> Option<Arc<dyn Material>> {
+        match &self.material {
+            Some(mat) => { return Some(mat.clone()); }
+            None => { return None; }
+        }
     }
 
     // TODO - this....................
@@ -54,9 +60,18 @@ impl GeometricPrimitive {
     pub fn init(shape: Arc<dyn Shape>, material: Arc<dyn Material>, arealight: Arc<dyn AreaLight>, medium_interface: &MediumInterface) -> Self {
         Self {
             shape: shape,
-            material: material,
-            arealight: arealight,
-            medium_interface: MediumInterface::init(medium_interface.inside.clone(), medium_interface.outside.clone())
+            material: Some(material),
+            arealight: Some(arealight),
+            medium_interface: Some(MediumInterface::init(medium_interface.inside.clone(), medium_interface.outside.clone()))
+        }
+    }
+
+    pub fn init_shape(shape: Arc<dyn Shape>) -> Self {
+        Self {
+            shape: shape,
+            material: None,
+            arealight: None,
+            medium_interface: None
         }
     }
 }

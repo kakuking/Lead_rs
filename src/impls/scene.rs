@@ -2,6 +2,7 @@ use crate::common::*;
 
 pub struct Scene{
     shapes: Vec<Arc<dyn Shape>>,
+    _accel: Option<Arc<dyn Aggregate>>,
 }
 
 // Constructor
@@ -14,6 +15,10 @@ fn create_scene(prop_list: PropertyList) -> LeadObject {
 // imp lead object
 impl LeadObjectTrait for Scene {
     fn init(&mut self, _prop_list: PropertyList) { }
+
+    fn activate(&mut self) {
+        
+    }
 
     fn add_child(&mut self, child: LeadObject) {
         match child {
@@ -40,7 +45,8 @@ impl LeadObjectTrait for Scene {
 impl Scene{
     pub fn new() -> Self {
         Scene {
-            shapes: Vec::new()
+            shapes: Vec::new(),
+            _accel: None
         }
     }
 

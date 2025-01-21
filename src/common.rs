@@ -1,7 +1,7 @@
 pub use lazy_static::lazy_static;
 pub use std::any::Any;
 pub use std::rc::Rc;
-pub use std::{cell::RefCell, sync::Arc};
+pub use std::{cell::RefCell, sync::{Arc, Mutex}};
 
 pub use crate::factory::{register_lead_object, create_lead_object};
 
@@ -25,9 +25,11 @@ pub use crate::utils::matrix::Matrix4x4;
 pub use crate::utils::transform::Transform;
 pub use crate::utils::solver::Solver;
 pub use crate::utils::primitive::Primitive;
+pub use crate::utils::aggregate::Aggregate;
 
 pub use crate::impls::scene::*;
 pub use crate::impls::interaction::*;
+pub use crate::impls::bvh::*;
 
 pub fn indent(input: &str, spaces: usize) -> String {
     let indentation = " ".repeat(spaces);

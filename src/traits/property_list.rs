@@ -67,12 +67,10 @@ impl PropertyList{
             self.add_rotation(angle, axis);
             return;
         } else if p_type == "scale" {
-            println!("Adding scale");
             let value = attrs.get("value").expect("No value provided to prop").to_owned();
             self.add_scale(value);
             return;
         } else if p_type == "translate" {
-            println!("Adding translate");
             let value = attrs.get("value").expect("No value provided to prop").to_owned();
             self.add_translation(value);
             return;

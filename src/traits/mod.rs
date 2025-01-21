@@ -6,4 +6,3 @@ pub mod interaction;
 pub mod arealight;
 pub mod material;
 pub mod integrator;
-pub mod aggregate;

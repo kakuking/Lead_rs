@@ -8,4 +8,5 @@ pub mod bounding_box;
 pub mod matrix;
 pub mod transform;
 pub mod solver;
+pub mod aggregate;
 pub mod primitive;
