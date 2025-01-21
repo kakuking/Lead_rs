@@ -33,7 +33,7 @@ impl Ray {
     pub fn init(origin: &Point3f, dir: &Vector3f, t_min: f32, t_max: f32) -> Self {
         Self {
             o: origin.clone(),
-            d: dir.clone(),
+            d: Vector3f::normalize(dir),
             t_min: t_min,
             t_max: t_max
         }
@@ -98,7 +98,7 @@ impl RayDifferential {
     }
 
     pub fn to_string(&self) -> String {
-        format!("Ray[o: {}, d: {}, t_min: {}, t_min: {}]", self.o.to_string(), self.d.to_string(), self.t_min, self.t_max)
+        format!("Ray[o: {}, d: {}, t_min: {}, t_max: {}]", self.o.to_string(), self.d.to_string(), self.t_min, self.t_max)
     }
 
     pub fn scale_differentials(&mut self, s: f32) {

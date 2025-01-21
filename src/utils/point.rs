@@ -36,11 +36,6 @@ impl<T, const N: usize> Point<T, N>
     }
 
     pub fn init_copy(other: &Point<T, N>) -> Self {
-        if other.has_nan() {
-            println!("Vector tryingto be copied has Nans!");
-            return Self::new();
-        }
-
         Self {
             coordinates: other.coordinates
         }
@@ -172,7 +167,7 @@ impl<T, const N: usize> Point<T, N>
     pub fn max(v1: &Self, v2: &Self) -> Self {
         let mut new_max = v1.coordinates.clone();
         for i in 0..N {
-            new_max[i] = new_max[i].min(v2[i]);
+            new_max[i] = new_max[i].max(v2[i]);
         }
         Self::init(
             new_max

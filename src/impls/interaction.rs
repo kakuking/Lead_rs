@@ -113,4 +113,8 @@ impl SurfaceInteraction {
         self.shading.dndu = dndus;
         self.shading.dndv = dndvs;
     }
+
+    pub fn to_string(&self) -> String {
+        format!("Intersection: [\n  p: {},\n  t: {},\n  wo: {},\n  n: {},\n  uv: {}\n]", self.p.to_string(), self.t, self.wo.to_string(), self.n.to_string(), self.uv.to_string())
+    }
 }

@@ -35,11 +35,6 @@ impl<T, const N: usize> Vector<T, N>
     }
 
     pub fn init_copy(other: &Self) -> Self {
-        if other.has_nan() {
-            println!("Vector tryingto be copied has Nans!");
-            return Self::new();
-        }
-
         Self {
             direction: other.direction
         }

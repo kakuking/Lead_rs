@@ -274,9 +274,8 @@ impl Mul<Bounds3f> for &Transform {
     type Output = Bounds3f;
 
     fn mul(self, b: Bounds3f) -> Self::Output {
-        let mut ret = Bounds3f::init_one(
-            &(self * Point3f::init_copy(&b.p_min))
-        );
+        let mut ret = Bounds3f::new();
+        ret = Bounds3f::union_pt(&ret, &(self * Point3f::init([b.p_min.x(), b.p_min.y(), b.p_min.z()])));
         ret = Bounds3f::union_pt(&ret, &(self * Point3f::init([b.p_max.x(), b.p_min.y(), b.p_min.z()])));
         ret = Bounds3f::union_pt(&ret, &(self * Point3f::init([b.p_min.x(), b.p_max.y(), b.p_min.z()])));
         ret = Bounds3f::union_pt(&ret, &(self * Point3f::init([b.p_min.x(), b.p_min.y(), b.p_max.z()])));
@@ -305,6 +304,7 @@ impl Mul<&SurfaceInteraction> for &Transform {
     fn mul(self, s: &SurfaceInteraction) -> Self::Output {
         let mut ret = SurfaceInteraction::new();
 
+        ret.p = self * s.p;
         ret.n = Normal3f::normalize(&(self * s.n));
         ret.wo = self * s.wo;
         ret.t = s.t;

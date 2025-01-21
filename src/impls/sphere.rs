@@ -77,18 +77,9 @@ impl Shape for Sphere {
         let o_obj: Point3f = &self.world_to_object() * ray.o;
         let d_obj: Vector3f = &self.world_to_object() * ray.d;
 
-        let d_sqr = Vector3f::dot(&d_obj, &d_obj);
-        let o_sqr = o_obj.x()*o_obj.x() + o_obj.y()*o_obj.y() + o_obj.z()*o_obj.z();
-        let c_sqr = 0f32;   // of center
-
-        let oc = 0f32;  // o dot center
-        let r2 = self.radius * self.radius;
-        let o_minus_c: Vector3f = o_obj - Point3f::new();
-        let d_dot_o_minus_c = Vector3f::dot(&o_minus_c, &d_obj);
-
-        let a = d_sqr;
-        let b = 2f32*d_dot_o_minus_c;
-        let c = c_sqr + o_sqr - 2f32*oc - r2;
+        let a = Vector3f::dot(&d_obj, &d_obj);
+        let b = 2f32 * Point3f::dot(&(Point3f::new() + d_obj), &o_obj);
+        let c = Point3f::dot(&o_obj, &o_obj) - self.radius * self.radius;
         
         let mut r_1: Option<f32> = None;
         let mut r_2: Option<f32> = None;
@@ -160,8 +151,58 @@ impl Shape for Sphere {
         true
     }
 
-    fn intersect_p(&self, _ray: &Ray) -> bool {
-        false
+    fn intersect_p(&self, ray: &Ray) -> bool {
+        let mut t_hit: f32 = 0f32;
+        let o_obj: Point3f = &self.world_to_object() * ray.o;
+        let d_obj: Vector3f = &self.world_to_object() * ray.d;
+
+        let a = Vector3f::dot(&d_obj, &d_obj);
+        let b = 2f32 * Point3f::dot(&(Point3f::new() + d_obj), &o_obj);
+        let c = Point3f::dot(&o_obj, &o_obj) - self.radius * self.radius;
+        
+        let mut r_1: Option<f32> = None;
+        let mut r_2: Option<f32> = None;
+
+        if !Solver::quadratic(a, b, c, &mut r_1, &mut r_2) {
+            return false;
+        }
+
+        
+        let t_less = r_1.unwrap_or(-INFINITY);
+        let t_more = r_2.unwrap_or(-INFINITY);
+
+        // its outside acceptable range
+        if t_more < ray.t_min || t_less > ray.t_max {
+            return false;
+        }
+
+        let mut flag = false;
+
+        if t_more >= ray.t_min && t_more <= ray.t_max {
+            t_hit = t_more;
+            flag = true;
+        }
+
+        if t_less >= ray.t_min && t_less <= ray.t_max {
+            t_hit = t_less;
+            flag = true;
+        }
+
+        if !flag {
+            return false;
+        }
+
+        let p = o_obj + d_obj * t_hit;
+
+
+        let theta = (p.z() / self.radius).acos();
+        let phi = p.y().signum() * (p.x() / (p.x()*p.x() + p.y()*p.y()).sqrt()).acos();
+
+        // Check if within bounds
+        if phi > self.phi_max || theta > self.theta_max || theta < self.theta_min {
+            return false;
+        }
+        true
     }
 }
 
@@ -182,8 +223,8 @@ impl LeadObjectTrait for Sphere {
 impl Sphere{
     pub fn new(prop_list: PropertyList) -> Self {
         let radius = prop_list.get_float("radius", 1f32);
-        let z_min = prop_list.get_float("z_min", -1f32).clamp(-radius, radius);
-        let z_max = prop_list.get_float("z_max", 1f32).clamp(-radius, radius);
+        let z_min = prop_list.get_float("z_min", -radius).clamp(-radius, radius);
+        let z_max = prop_list.get_float("z_max", radius).clamp(-radius, radius);
         let phi_max = prop_list.get_float("phi_max", 360f32).clamp(0f32, 360f32).to_radians();
 
         let bounding_box = Bounds3f::init(
@@ -196,8 +237,8 @@ impl Sphere{
         Sphere{
             radius,
             z_min, z_max,
-            theta_min: (z_min / radius).acos().clamp(-1f32, 1f32),
-            theta_max: (z_max / radius).acos().clamp(-1f32, 1f32),
+            theta_min: M_PI - (z_min / radius).clamp(-1f32, 1f32).acos(),
+            theta_max: M_PI - (z_max / radius).clamp(-1f32, 1f32).acos(),
             phi_max,
             world_to_object: object_to_world.inverse(),
             object_to_world: object_to_world,

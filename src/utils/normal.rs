@@ -37,11 +37,6 @@ impl<T, const N: usize> Normal<T, N>
     }
 
     pub fn init_copy(other: &Self) -> Self {
-        if other.has_nan() {
-            println!("Normal tryingto be copied has Nans!");
-            return Self::new();
-        }
-
         Self {
             direction: other.direction.clone()
         }
