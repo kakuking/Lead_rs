@@ -14,6 +14,8 @@ pub use crate::traits::arealight::AreaLight;
 pub use crate::traits::material::Material;
 pub use crate::traits::integrator::TransportMode;
 pub use crate::traits::scene::SceneTrait;
+pub use crate::traits::spectrum::*;
+pub use crate::traits::camera::{Camera, CameraSample, ProjectiveCamera};
 
 pub use crate::macros::*;
 
@@ -27,6 +29,9 @@ pub use crate::utils::transform::Transform;
 pub use crate::utils::solver::Solver;
 pub use crate::utils::primitive::Primitive;
 pub use crate::utils::aggregate::Aggregate;
+pub use crate::utils::film::Film;
+pub use crate::utils::vis_test::VisibilityTester;
+pub use crate::utils::warp_samples::Warp;
 
 pub use crate::impls::scene::*;
 pub use crate::impls::interaction::*;
@@ -45,3 +50,5 @@ pub const EPSILON: f32 = 10e-4;
 pub const INFINITY: f32 = f32::INFINITY;
 pub const M_PI: f32 = 3.14159265359;
 pub const M_INV_PI: f32 = 0.31830988618;
+
+pub type Spectrum = crate::impls::rgb_spectrum::RGBSpectrum;

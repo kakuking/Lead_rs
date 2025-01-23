@@ -16,13 +16,19 @@ Current To-Do list -
 
 - [ ] Add ~~Sphere~~, Cylinders, Disks, Quadrics, **Triangle Meshes**, Curves, and Subdivision Surfaces
 
-- [ ] Add Primitives interface
+- [x] Add Primitives interface
 
-- [ ] Add aggregates ~~Bounding Volume Heirarchy~~, and Kd-Tree (maybe)
+- [x] Add aggregates Bounding Volume Heirarchy
 
-- [ ] Add Spectra and Color stuff
+- [x] Add Spectra and Color stuff
 
 - [ ] Add Camera models
+
+  - [x] Orthographic camera
+
+  - [ ] Perspective camera
+
+  - [ ] Environment (panoramic) camera
 
 - [ ] Add samplers and film
 

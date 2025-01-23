@@ -1,5 +1,4 @@
 // use std::ops::{Index, IndexMut};
-use crate::common::*;
 use derive_more::{Index, IndexMut};
 
 #[derive(Debug, Clone, Index, IndexMut)]
@@ -124,7 +123,7 @@ impl Matrix4x4 {
 
     pub fn inverse(&self) -> Self{
         let det = self.determinant();
-        assert!(det > EPSILON, "Non-invertible matrix!");
+        assert!(det > 0.0, "Non-invertible matrix!");
 
         let mut ret = Self::new();
         for r in 0..4 {

@@ -7,3 +7,5 @@ pub mod arealight;
 pub mod material;
 pub mod integrator;
 pub mod scene;
+pub mod spectrum;
+pub mod camera;

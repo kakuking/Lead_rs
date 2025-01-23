@@ -369,6 +369,14 @@ impl Aggregate for BVHAccel {
     fn primitives(&self) -> &Vec<Arc<dyn Primitive>> {
         &self.primitives
     }
+
+    fn to_string(&self) -> String {
+        format!(
+            "BVH[\n  max primitives in node: {},\n  split method: {},\n  primitive count: {},\n  number of nodes: {}\n]",
+            self.max_primitives_in_node, self.split_method.to_string(),
+            self.primitives.len(), self.nodes.len()
+        )
+    }
 }
 
 impl Primitive for BVHAccel {

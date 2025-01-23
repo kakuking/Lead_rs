@@ -250,7 +250,7 @@ impl<T, const N: usize> Div<T> for Point<T, N>
 }
 
 impl_operator!(Point<T, const N: usize>, Add, add, +, Point<T, const N: usize>);
-impl_operator!(Point<T, const N: usize>, Sub, sub, *, Vector<T, const N: usize>);
+impl_operator!(Point<T, const N: usize>, Sub, sub, -, Vector<T, const N: usize>);
 impl_operator!(Point<T, const N: usize>, Mul, mul, *, Point<T, const N: usize>);
 impl_operator_unary!(Point<T, const N: usize>, Neg, neg, -);
 impl_operator_inplace!(Point<T, const N: usize>, AddAssign, add_assign, +=);

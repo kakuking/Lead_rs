@@ -1,4 +1,4 @@
-use crate::common::{Bounds3f, Normal3f, SurfaceInteraction, Vector3f};
+use crate::common::{Bounds3f, Normal3f, SurfaceInteraction, Vector3f, Ray, RayDifferential};
 
 use super::{matrix::Matrix4x4, normal::Normal, point::{Point, Point3f}, vector::Vector};
 use std::fmt::Display;
@@ -58,6 +58,7 @@ impl Transform {
     }
 
     pub fn scale(t: &Vector3f) -> Self {
+        let t= t.abs();
         let mat = Matrix4x4::init(t.x(), 0.0, 0.0, 0.0, 
             0.0, t.y(), 0.0, 0.0, 
             0.0, 0.0, t.z(), 0.0, 
@@ -97,15 +98,15 @@ impl Transform {
         }
     }
 
-    pub fn look_at(pos: &Point3f, look: &Point3f, up: &Vector3f) -> Self {
+    pub fn look_at(eye: &Point3f, look: &Point3f, up: &Vector3f) -> Self {
         let mut m = Matrix4x4::identity();
 
-        m[0][3] = pos.x();
-        m[1][3] = pos.y();
-        m[2][3] = pos.z();
+        m[0][3] = eye.x();
+        m[1][3] = eye.y();
+        m[2][3] = eye.z();
         m[3][3] = 1.0;
 
-        let dir = Vector3f::normalize(&(*look - *pos));
+        let dir = Vector3f::normalize(&((*look) - (*eye)));
         let right = Vector3f::normalize(
             &Vector3f::cross(
                 &Vector3f::normalize(up), 
@@ -283,6 +284,42 @@ impl Mul<Bounds3f> for &Transform {
         ret = Bounds3f::union_pt(&ret, &(self * Point3f::init([b.p_max.x(), b.p_max.y(), b.p_min.z()])));
         ret = Bounds3f::union_pt(&ret, &(self * Point3f::init([b.p_max.x(), b.p_min.y(), b.p_max.z()])));
         ret = Bounds3f::union_pt(&ret, &(self * Point3f::init([b.p_max.x(), b.p_max.y(), b.p_max.z()])));
+        ret
+    }
+}
+
+impl Mul<&Ray> for &Transform {
+    type Output = Ray;
+
+    fn mul(self, b: &Ray) -> Self::Output {
+        let mut ret = Ray::new();
+        ret.o = self * b.o;
+        ret.d = self * b.d;
+        ret.t_min = b.t_min;
+        ret.t_max = b.t_max;
+        ret.medium = b.medium.clone();
+
+        ret
+    }
+}
+
+impl Mul<&RayDifferential> for &Transform {
+    type Output = RayDifferential;
+
+    fn mul(self, b: &RayDifferential) -> Self::Output {
+        let mut ret = RayDifferential::new();
+        ret.o = self * b.o;
+        ret.d = self * b.d;
+        ret.rx_o = self * b.rx_o;
+        ret.rx_d = self * b.rx_d;
+        ret.ry_o = self * b.ry_o;
+        ret.ry_d = self * b.ry_d;
+        ret.has_differential = b.has_differential;
+
+        ret.t_min = b.t_min;
+        ret.t_max = b.t_max;
+        ret.medium = b.medium.clone();
+
         ret
     }
 }

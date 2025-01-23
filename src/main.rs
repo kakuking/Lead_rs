@@ -16,6 +16,7 @@ fn main() {
         Ok(root_node) => root_node,
         Err(e) => panic!("Ran into error {:?}", e)
     };
+
     main_scene_obj.activate();
 
     let main_scene  = match main_scene_obj {

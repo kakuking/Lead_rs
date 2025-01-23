@@ -11,6 +11,7 @@ pub trait LeadObjectTrait {
 pub enum LeadObject {
     Scene(Arc<dyn SceneTrait>),
     Shape(Arc<dyn Shape>),
+    Camera(Arc<dyn Camera>),
     Unknown(())
 }
 
@@ -19,6 +20,7 @@ impl LeadObject {
         match self {
             LeadObject::Scene(_) => "scene",
             LeadObject::Shape(_) => "shape",
+            LeadObject::Camera(_) => "camera",
             LeadObject::Unknown(_) => "Unknown",
         }
     }
@@ -27,6 +29,7 @@ impl LeadObject {
         match self {
             LeadObject::Scene(s) => Arc::get_mut(s).unwrap().add_child(child),
             LeadObject::Shape(s) => Arc::get_mut(s).unwrap().add_child(child),
+            LeadObject::Camera(s) => Arc::get_mut(s).unwrap().add_child(child),
             LeadObject::Unknown(_) => panic!("Cannot add child to unknown object!")
         };
     }
@@ -35,6 +38,7 @@ impl LeadObject {
         match self {
             LeadObject::Scene(s) => Arc::get_mut(s).unwrap().activate(),
             LeadObject::Shape(s) => Arc::get_mut(s).unwrap().activate(),
+            LeadObject::Camera(s) => Arc::get_mut(s).unwrap().activate(),
             LeadObject::Unknown(_) => panic!("Cannot activate unknown object")
         }
     }

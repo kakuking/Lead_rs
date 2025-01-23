@@ -24,9 +24,11 @@ impl LeadObjectTrait for Scene {
             primitives.push(Arc::new(prim));
         }
 
-        let mut bvh: BVHAccel = BVHAccel::new();
-        bvh.create(primitives, 120, SplitMethod::SAH);
-        self.accel = Arc::new(bvh);
+        if primitives.len() > 0 {
+            let mut bvh: BVHAccel = BVHAccel::new();
+            bvh.create(primitives, 120, SplitMethod::SAH);
+            self.accel = Arc::new(bvh);
+        }
     }
 
     fn add_child(&mut self, child: LeadObject) {

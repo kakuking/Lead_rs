@@ -206,6 +206,10 @@ impl<T, const N: usize> Vector<T, N>
     pub fn equal(p1: &Self, p2: &Self) -> bool {
         p1.direction == p2.direction
     }
+
+    pub fn abs(&self) -> Self {
+        Self::init(self.direction.map(|x| x.abs()))
+    }
 }
 
 impl_operator!(Vector<T, const N: usize>, Add, add, +, Vector<T, const N: usize>);

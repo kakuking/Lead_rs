@@ -4,7 +4,8 @@ pub struct Ray {
     pub o: Point3f,
     pub d: Vector3f,
     pub t_min: f32,
-    pub t_max: f32
+    pub t_max: f32,
+    pub medium: Option<Arc<Medium>>
 }
 
 pub struct RayDifferential {
@@ -12,6 +13,7 @@ pub struct RayDifferential {
     pub d: Vector3f,
     pub t_min: f32,
     pub t_max: f32,
+    pub medium: Option<Arc<Medium>>,
 
     pub rx_o: Point3f,
     pub ry_o: Point3f,
@@ -26,7 +28,8 @@ impl Ray {
             o: Point3f::new(),
             d: Vector3f::new(),
             t_min: EPSILON,
-            t_max: INFINITY
+            t_max: INFINITY,
+            medium: None
         }
     }
 
@@ -35,7 +38,8 @@ impl Ray {
             o: origin.clone(),
             d: Vector3f::normalize(dir),
             t_min: t_min,
-            t_max: t_max
+            t_max: t_max,
+            medium: None
         }
     }
 
@@ -59,12 +63,13 @@ impl RayDifferential {
             d: Vector3f::new(),
             t_min: EPSILON,
             t_max: INFINITY,
+            medium: None,
 
             rx_o: Point3f::new(),
             ry_o: Point3f::new(),
             rx_d: Vector3f::new(),
             ry_d: Vector3f::new(),
-            has_differential: false
+            has_differential: true
         }
     }
 
@@ -74,12 +79,13 @@ impl RayDifferential {
             d: dir.clone(),
             t_min: t_min,
             t_max: t_max,
+            medium: None,
             
             rx_o: Point3f::new(),
             ry_o: Point3f::new(),
             rx_d: Vector3f::new(),
             ry_d: Vector3f::new(),
-            has_differential: false
+            has_differential: true
         }
     }
 

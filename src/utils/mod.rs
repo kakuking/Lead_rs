@@ -1,6 +1,4 @@
-// pub mod vector2;
 pub mod vector;
-// pub mod point2;
 pub mod point;
 pub mod normal;
 pub mod ray;
@@ -10,3 +8,6 @@ pub mod transform;
 pub mod solver;
 pub mod aggregate;
 pub mod primitive;
+pub mod film;
+pub mod vis_test;
+pub mod warp_samples;
