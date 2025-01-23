@@ -1,7 +1,7 @@
 use crate::common::*;
 
 #[derive(Debug, Clone)]
-pub struct OrthographicCamera {
+pub struct PerspectiveCamera {
     camera_to_world: Transform,
     camera_to_screen: Transform,
     raster_to_camera: Transform,
@@ -15,17 +15,18 @@ pub struct OrthographicCamera {
     focal_distance: f32,
 
     dx_camera: Vector3f,
-    dy_camera: Vector3f
+    dy_camera: Vector3f,
+    a: f32,
 }
 
 // Constructor
-fn create_orthographic_camera(prop_list: PropertyList) -> LeadObject {
-    let mut camera = OrthographicCamera::new();
+fn create_perspective_camera(prop_list: PropertyList) -> LeadObject {
+    let mut camera = PerspectiveCamera::new();
     camera.init(prop_list);
     LeadObject::Camera(Arc::new(camera))
 }
 
-impl Camera for OrthographicCamera {
+impl Camera for PerspectiveCamera {
     fn camera_to_world(&self) -> &Transform { &self.camera_to_world }
     fn film(&self) -> Option<Arc<Film>> { self.film.clone() }
     fn medium(&self) -> Option<Arc<Medium>> { self.medium.clone() }
@@ -107,7 +108,7 @@ impl Camera for OrthographicCamera {
     }
 }   
 
-impl ProjectiveCamera for OrthographicCamera {
+impl ProjectiveCamera for PerspectiveCamera {
     fn camera_to_screen(&self) -> &Transform { &self.camera_to_screen }
     fn raster_to_camera(&self) -> &Transform { &self.raster_to_camera }
     fn screen_to_raster(&self) -> &Transform { &self.screen_to_raster }
@@ -123,7 +124,7 @@ impl ProjectiveCamera for OrthographicCamera {
     fn set_focal_distance(&mut self, fd: f32) { self.focal_distance = fd; }
 }
 
-impl LeadObjectTrait for OrthographicCamera {
+impl LeadObjectTrait for PerspectiveCamera {
     // TODO ACTUALLY GET SCREEN WINDOW, Film, and MEDIUM here
     fn init(&mut self, prop_list: PropertyList) {
         let lookat = prop_list.get_point3("lookat", Point3f::new());
@@ -134,19 +135,30 @@ impl LeadObjectTrait for OrthographicCamera {
         let lens_r = prop_list.get_float("lens_radius", 0.0);   // 0.0 means no depth of field
         let focal_d = prop_list.get_float("focal_distance", 1.0);
 
+        let fov = prop_list.get_float("fov", 30f32);    // in degrees
+
         let mut screen_window = Bounds2f::new();
         screen_window.p_min = Point2f::init([0.0, 0.0]);
-        screen_window.p_max = Point2f::init([800.0, 600.0]);
+        screen_window.p_max = Point2f::init([700.0, 500.0]);
 
         let film = Film{
             full_resolution: Point2f::init([800.0, 600.0])
         };
         let medium = Medium {};
 
-        self.init_projective_camera(camera_to_world, Self::ortho_projection_matrix(0.0, 1.0), screen_window, lens_r, focal_d, Arc::new(film), Arc::new(medium));
+        self.init_projective_camera(camera_to_world, Self::perspective_projection_matrix(fov, 0.01, 1000.0), screen_window, lens_r, focal_d, Arc::new(film), Arc::new(medium));
 
-        self.dx_camera = &self.raster_to_camera * Vector3f::init([1.0, 0.0, 0.0]);
-        self.dy_camera = &self.raster_to_camera * Vector3f::init([0.0, 1.0, 0.0]);
+        self.dx_camera = &self.raster_to_camera * Vector3f::init([1.0, 0.0, 0.0]) - &self.raster_to_camera * Vector3f::init([0.0, 0.0, 0.0]);
+        self.dy_camera = &self.raster_to_camera * Vector3f::init([0.0, 1.0, 0.0]) - &self.raster_to_camera * Vector3f::init([0.0, 0.0, 0.0]);
+
+        let res = film.full_resolution;
+        let mut p_min = &self.raster_to_camera * Vector3f::init([0.0, 0.0, 1.0]);
+        let mut p_max = &self.raster_to_camera * Vector3f::init([res.x(), res.y(), 1.0]);
+        p_min = p_min / p_min.z();
+        p_max = p_max / p_max.z();
+        
+        self.a = (p_max.x() - p_min.x()) * (p_max.y() - p_min.y());
+        self.a = self.a.abs();
     }
 
     fn activate(&mut self) {
@@ -154,15 +166,15 @@ impl LeadObjectTrait for OrthographicCamera {
     }
 
     fn add_child(&mut self, _child: LeadObject) {
-        panic!("Cannot add child to orthographic camera!");
+        panic!("Cannot add child to perspective camera!");
     }
 
     fn to_string(&self) -> String {
-        format!("Orthographic Camera[]")
+        format!("Perspective Camera[]")
     }
 }
 
-impl OrthographicCamera {
+impl PerspectiveCamera {
     pub fn new() -> Self {
         Self {
             camera_to_world:  Transform::new(),
@@ -175,14 +187,23 @@ impl OrthographicCamera {
             medium: None,
 
             lens_radius: 0.0, focal_distance: 1.0,
-            dx_camera: Vector3f::new(), dy_camera: Vector3f::new()
+            dx_camera: Vector3f::new(), dy_camera: Vector3f::new(),
+            a: 0.0,
         }
     }
 
-    fn ortho_projection_matrix(z_near: f32, z_far: f32) -> Transform {
-        Transform::scale(&Vector3f::init([1.0, 1.0, 1.0 / (z_far - z_near)]))
-        * Transform::translate(&Vector3f::init([0.0, 0.0, -z_near]))
+    fn perspective_projection_matrix(fov: f32, n: f32, f: f32) -> Transform {
+        let persp = Matrix4x4::init(
+            1.0, 0.0, 0.0, 0.0, 
+            0.0, 1.0, 0.0, 0.0, 
+            0.0, 0.0, f/(f-n), -f*n/(f-n), 
+            0.0, 0.0, 1.0, 0.0);
+        
+        let inv_tan_ang = 1.0 / (fov.to_radians()/2.0).tan();
+        let scale_vector = Vector3f::init([inv_tan_ang, inv_tan_ang, 1.0]);
+
+        Transform::scale(&scale_vector) * Transform::init_mat(&persp)
     }
 }
 
-register_struct!("orthographic", create_orthographic_camera);
+register_struct!("perspective", create_perspective_camera);

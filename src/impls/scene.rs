@@ -34,6 +34,7 @@ impl LeadObjectTrait for Scene {
     fn add_child(&mut self, child: LeadObject) {
         match child {
             LeadObject::Shape(shape) => self.shapes.push(shape),
+            // LeadObject::Camera(c) => println!("{}", c.to_string()),
             _ => println!("Struct Scene does not take a child of class {}", child.to_string())
         };
     }

@@ -7,5 +7,7 @@
     </sphere>
 
     <orthographic></orthographic>
+    <perspective></perspective>
+    <environment></environment>
 
 </scene>

@@ -26,9 +26,9 @@ Current To-Do list -
 
   - [x] Orthographic camera
 
-  - [ ] Perspective camera
+  - [x] Perspective camera
 
-  - [ ] Environment (panoramic) camera
+  - [x] Environment (panoramic) camera
 
 - [ ] Add samplers and film
 
