@@ -354,7 +354,6 @@ impl Aggregate for BVHAccel {
 
         let root: Arc<BVHBuildNode> = self.recursive_build(&mut primitive_info, 0, self.primitives.len() as u32, &mut total_nodes, &mut ordered_primitives);
 
-        // TODO - Manipulation of primitives and adding SAH to recursive_build
         self.primitives = ordered_primitives;
         let mut offset: usize = 0usize;
 
@@ -493,7 +492,6 @@ impl Primitive for BVHAccel {
     }
 
     fn world_bound(&self) -> Bounds3f {
-        // TODO - impl this as well
         self.primitives[0 as usize].world_bound()
     }
 

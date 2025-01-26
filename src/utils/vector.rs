@@ -294,9 +294,7 @@ where T: Float + Copy + Display + FromStr,
     *v3 = Vector::<T, 3usize>::cross(v1, v2);
 }
 
-pub type Vector3i = Vector<i32, 3usize>;
 pub type Vector3f = Vector<f32, 3usize>;
 pub type Vector3d = Vector<f64, 3usize>;
-pub type Vector2i = Vector<i32, 2usize>;
 pub type Vector2f = Vector<f32, 2usize>;
 pub type Vector2d = Vector<f64, 2usize>;

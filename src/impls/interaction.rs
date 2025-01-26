@@ -15,7 +15,7 @@ pub struct SurfaceInteraction {
     pub dpdx: Vector3f, pub dpdy: Vector3f,
     pub dudx: f32, pub dvdx: f32, pub dudy: f32, pub dvdy: f32,
 
-    // TODO add primitive, BSDF, BSSRDF
+    // TODO add BSDF, BSSRDF
     pub primitive: Option<Arc<dyn Primitive>>,
 }
 

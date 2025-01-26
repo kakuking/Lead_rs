@@ -73,7 +73,7 @@ impl LeadObjectTrait for EnvironmentCamera {
         
     }
 
-    fn add_child(&mut self, _child: LeadObject) {
+    fn add_child(&mut self, _child: &mut LeadObject) {
         panic!("Cannot add child to perspective camera!");
     }
 

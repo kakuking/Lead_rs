@@ -209,7 +209,7 @@ impl Shape for Sphere {
 impl LeadObjectTrait for Sphere {
     fn init(&mut self, _prop_list: PropertyList) { }
 
-    fn add_child(&mut self, child: LeadObject) {
+    fn add_child(&mut self, child: &mut LeadObject) {
         println!("Struct Sphere does not take a child of class {}", child.to_string());
     }
 

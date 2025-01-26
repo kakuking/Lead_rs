@@ -9,3 +9,5 @@ ctor = "0.1"
 quick-xml = "0.37.2"
 num-traits = "0.2"
 derive_more = { version = "1", features = ["index", "index_mut"] }
+rand = "0.8.5"
+pcg_rand = "0.13.0"

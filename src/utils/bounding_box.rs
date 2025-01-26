@@ -346,7 +346,5 @@ impl<T> Bounds3<T>
     }
 }
 
-pub type Bounds2i = Bounds2<i32>;
 pub type Bounds2f = Bounds2<f32>;
-pub type Bounds3i = Bounds3<i32>;
 pub type Bounds3f = Bounds3<f32>;

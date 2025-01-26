@@ -11,3 +11,4 @@ pub mod primitive;
 pub mod film;
 pub mod vis_test;
 pub mod warp_samples;
+pub mod rng;

@@ -92,7 +92,7 @@ impl Parser {
         }
 
         let mut obj = create_lead_object(&node_type, prop_list);
-        for child in children.into_iter() {
+        for child in children.iter_mut() {
             obj.add_child(child);
         }
 

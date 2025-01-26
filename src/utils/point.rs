@@ -293,9 +293,7 @@ where
         }
 }
 
-pub type Point3i = Point<i32, 3>;
 pub type Point3f = Point<f32, 3>;
 pub type Point3d = Point<f64, 3>;
-pub type Point2i = Point<i32, 2>;
 pub type Point2f = Point<f32, 2>;
 pub type Point2d = Point<f64, 2>;

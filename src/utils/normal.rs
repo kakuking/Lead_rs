@@ -242,6 +242,5 @@ where
     }
 }
 
-pub type Normal3i = Normal<i32, 3usize>;
 pub type Normal3f = Normal<f32, 3usize>;
 pub type Normal3d = Normal<f64, 3usize>;
