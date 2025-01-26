@@ -12,10 +12,18 @@ Current To-Do list -
 
 - [ ] Add animated transformations
 
-- [x] Add basic Shape interface
+- [x] Add Shapes
 
-- [ ] Add ~~Sphere~~, Cylinders, Disks, Quadrics, **Triangle Meshes**, Curves, and Subdivision Surfaces
+  - [x] Sphere
+  
+  - [ ] Cylinders, Disks
+  
+  - [ ] Quadrics, Curves
 
+  - [ ] **Triangle Meshes**
+
+  - [ ] Subdivision Surfaces
+ 
 - [x] Add Primitives interface
 
 - [x] Add aggregates Bounding Volume Heirarchy
