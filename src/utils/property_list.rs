@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use crate::{common::*, traits::lead_object::*};
+use crate::{common::*, utils::lead_object::*};
 
 pub struct PropertyList{
     children: Vec<LeadObject>,

@@ -1,4 +1,4 @@
-use crate::{common::*, utils::primitive::GeometricPrimitive};
+use crate::common::*;
 
 pub struct Scene{
     shapes: Vec<Arc<dyn Shape>>,

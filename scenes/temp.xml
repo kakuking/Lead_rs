@@ -6,7 +6,7 @@
         <translate value="10, 10, 10"/>
     </sphere>
 
-    <camera type="orthographic"></camera>
+    <camera type="environment"></camera>
     <sampler type="stratified"></sampler>
 
 </scene>

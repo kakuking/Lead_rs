@@ -3,7 +3,7 @@ use std::sync::Mutex;
 use lazy_static::lazy_static;
 
 use crate::common::PropertyList;
-use crate::traits::lead_object::LeadObject;
+use crate::common::LeadObject;
 
 type LeadObjCtor = fn(PropertyList) -> LeadObject;
 

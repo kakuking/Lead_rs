@@ -1,5 +1,15 @@
-pub mod traits;
-pub mod impls;
+pub mod accel;
+pub mod camera;
+pub mod filter;
+pub mod geometry;
+pub mod integrator;
+pub mod light;
+pub mod material;
+pub mod medium;
+pub mod sampler;
+pub mod scene;
+pub mod shapes;
+pub mod spectrum;
 pub mod utils;
 
 pub mod macros;
