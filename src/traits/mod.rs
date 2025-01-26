@@ -10,5 +10,4 @@ pub mod scene;
 pub mod spectrum;
 pub mod camera;
 pub mod sampler;
-pub mod pixel_sampler;
-pub mod global_sampler;
+pub mod filter;

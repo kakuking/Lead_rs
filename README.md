@@ -23,7 +23,7 @@ Current To-Do list -
   - [ ] **Triangle Meshes**
 
   - [ ] Subdivision Surfaces
- 
+
 - [x] Add Primitives interface
 
 - [x] Add aggregates Bounding Volume Heirarchy

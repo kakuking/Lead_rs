@@ -1,4 +1,4 @@
-use crate::{common::*, traits::pixel_sampler::PixelSampler};
+use crate::common::*;
 
 pub struct StratifiedSampler {
     // Sampler variables

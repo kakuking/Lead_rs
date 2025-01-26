@@ -12,3 +12,8 @@ pub mod film;
 pub mod vis_test;
 pub mod warp_samples;
 pub mod rng;
+pub mod box_filter;
+pub mod triangle_filter;
+pub mod gaussian_filter;
+pub mod mitchell_filter;
+pub mod sinc_filter;

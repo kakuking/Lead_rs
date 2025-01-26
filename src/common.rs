@@ -16,7 +16,8 @@ pub use crate::traits::integrator::TransportMode;
 pub use crate::traits::scene::SceneTrait;
 pub use crate::traits::spectrum::*;
 pub use crate::traits::camera::{Camera, CameraSample, ProjectiveCamera};
-pub use crate::traits::sampler::Sampler;
+pub use crate::traits::sampler::{Sampler, PixelSampler, GlobalSampler};
+pub use crate::traits::filter::Filter;
 
 pub use crate::macros::*;
 
@@ -34,6 +35,7 @@ pub use crate::utils::film::Film;
 pub use crate::utils::vis_test::VisibilityTester;
 pub use crate::utils::warp_samples::Warp;
 pub use crate::utils::rng::RNG;
+pub use crate::utils::{box_filter::BoxFilter, triangle_filter::TriangleFilter, gaussian_filter::GaussianFilter, mitchell_filter::MitchellFilter, sinc_filter::SincFilter};
 
 pub use crate::impls::scene::*;
 pub use crate::impls::interaction::*;
