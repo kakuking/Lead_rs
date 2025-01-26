@@ -30,7 +30,13 @@ Current To-Do list -
 
   - [x] Environment (panoramic) camera
 
-- [ ] Add samplers and film
+- [ ] Add samplers
+
+  - [x] Stratified sampler
+
+  - [ ] Other samplers
+
+- [ ] Add film
 
 - [ ] Add BxDFs
 
