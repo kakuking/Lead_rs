@@ -1,6 +1,6 @@
 # The Lead (Rust) Renderer
 
-This is an experimental render taking certain inspirations from the Nori renderer. I plan to follow the [PBR Book (4ed)](https://pbr-book.org/) in my pursuit to create a Pathtracer.
+This is an experimental render taking certain inspirations from the Nori renderer. I plan to follow the [PBR Book (3ed)](https://pbr-book.org/3ed-2018/) in my pursuit to create a Pathtracer.
 
 I initially started this project in C++, but I quickly realized that rather than learning what was going on behind the scenes, I started copying code verbatim, or with minimal changes. What did I do next? Why I switched over to Rust! With its borrow-checker and type-system I hope to better learn how to manage different coding patterns accross different languages.
 
@@ -44,7 +44,7 @@ Current To-Do list -
 
   - [ ] Other samplers
 
-- [ ] Add film
+- [x] Add Film and Writer
 
 - [ ] Add BxDFs
 
