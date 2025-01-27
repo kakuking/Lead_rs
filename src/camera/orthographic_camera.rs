@@ -138,9 +138,7 @@ impl LeadObjectTrait for OrthographicCamera {
         screen_window.p_min = Point2f::init([0.0, 0.0]);
         screen_window.p_max = Point2f::init([800.0, 600.0]);
 
-        let film = Film{
-            full_resolution: Point2f::init([800.0, 600.0])
-        };
+        let film = Film::new();
         let medium = Medium {};
 
         self.init_projective_camera(camera_to_world, Self::ortho_projection_matrix(0.0, 1.0), screen_window, lens_r, focal_d, Arc::new(film), Arc::new(medium));

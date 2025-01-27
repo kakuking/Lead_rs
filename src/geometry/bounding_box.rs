@@ -5,12 +5,22 @@ use std::ops::Mul;
 
 use super::{point::Point, ray::Ray, vector::Vector};
 
+#[derive(Debug, Clone, Copy)]
 pub struct Bounds2<T> 
 where T: Float + Copy
 {
     pub p_min: Point<T, 2usize>,
     pub p_max: Point<T, 2usize>,
 }
+
+pub struct Bounds2Iterator<T>
+where T: Float + Copy
+{
+    bounds: Bounds2<T>,
+    current: Point<T, 2usize>
+}
+
+
 
 #[derive(Debug, Clone, Copy)]
 pub struct Bounds3<T> 
@@ -49,6 +59,10 @@ impl<T> Bounds2<T>
 
     pub fn diagonal(&self) -> Vector<T, 2usize> {
         self.p_max - self.p_min
+    }
+
+    pub fn iter(&self) -> Bounds2Iterator<T> {
+        Bounds2Iterator { bounds: *self, current: self.p_min }
     }
 
     pub fn area(&self) -> T {
@@ -101,6 +115,64 @@ impl<T> Bounds2<T>
             1usize => {return  self.p_max;}
             _ => {panic!("Invalid index for bounding box!")}
         }
+    }
+
+    pub fn union(b1: &Self, b2: &Self) -> Self {
+        let p_min = Point::<T, 2usize>::min(&b1.p_min, &b2.p_min);
+        let p_max = Point::<T, 2usize>::max(&b1.p_max, &b2.p_max);
+        Self {
+            p_min: p_min,
+            p_max: p_max
+        }
+    }
+
+    pub fn intersect(b1: &Self, b2: &Self) -> Self {
+        let p_min = Point::<T, 2usize>::max(&b1.p_min, &b2.p_min);
+        let p_max = Point::<T, 2usize>::min(&b1.p_max, &b2.p_max);
+        Self {
+            p_min: p_min,
+            p_max: p_max
+        }
+    }
+
+    pub fn bounding_sphere(&self, center: &mut Point<T, 2usize>, radius: &mut T) {
+        *center = (self.p_min + self.p_max) / T::from(2f32).unwrap();
+        *radius = match Self::inside(&center, self) {
+            true => (*center - self.p_max).length(),
+            false => T::zero()
+        }
+    }
+
+    pub fn inside(p: &Point<T, 2usize>, b: &Self) -> bool {
+        p.x() >= b.p_min.x() && p.x() <= b.p_max.x() &&
+        p.y() >= b.p_min.y() && p.y() <= b.p_max.y()
+    }
+
+    pub fn inside_exclusive(p: &Point<T, 2usize>, b: &Self) -> bool {
+        p.x() >= b.p_min.x() && p.x() < b.p_max.x() &&
+        p.y() >= b.p_min.y() && p.y() < b.p_max.y()
+    }
+}
+
+impl<T> Iterator for Bounds2Iterator<T>
+where T: Float + Copy + Display + FromStr,
+<T as FromStr>::Err: std::fmt::Debug, 
+{
+    type Item = Point<T, 2usize>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.current.y() >= self.bounds.p_max.y() {
+            return None;
+        }
+
+        let point = self.current.ceil();
+        self.current[0] = self.current[0] +  T::from(1.0).unwrap();
+        if self.current.x() >= self.bounds.p_max.x() {
+            self.current[0] = self.bounds.p_min.x();
+            self.current[1] = self.current[1] + T::from(1.0).unwrap();
+        }
+
+        Some(point)
     }
 }
 

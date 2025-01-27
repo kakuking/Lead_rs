@@ -1,3 +1,5 @@
+use std::ops::{Add, Mul};
+
 use crate::common::*;
 use derive_more::{Index, IndexMut};
 
@@ -256,5 +258,33 @@ impl RGBSpectrum {
         xyz[2] *= scale;
 
         Self::from_xyz(xyz, SpectrumType::Reflectance)
+    }
+}
+
+impl Mul<f64> for RGBSpectrum {
+    type Output = Self;
+
+    fn mul(self, rhs: f64) -> Self::Output {
+        let mut c = [0f64; 3];
+        c[0] = self.c[0] * rhs;
+        c[1] = self.c[1] * rhs;
+        c[2] = self.c[2] * rhs;
+        Self {
+            c
+        }
+    }
+}
+
+impl Add for RGBSpectrum {
+    type Output = Self;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        let mut c = [0f64; 3];
+        c[0] = self.c[0] + rhs[0];
+        c[1] = self.c[1] + rhs[1];
+        c[2] = self.c[2] + rhs[2];
+        Self {
+            c
+        }
     }
 }

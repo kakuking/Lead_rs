@@ -141,17 +141,15 @@ impl LeadObjectTrait for PerspectiveCamera {
         screen_window.p_min = Point2f::init([0.0, 0.0]);
         screen_window.p_max = Point2f::init([700.0, 500.0]);
 
-        let film = Film{
-            full_resolution: Point2f::init([800.0, 600.0])
-        };
+        let film = Film::new();
         let medium = Medium {};
+        let res = film.full_resolution;
 
         self.init_projective_camera(camera_to_world, Self::perspective_projection_matrix(fov, 0.01, 1000.0), screen_window, lens_r, focal_d, Arc::new(film), Arc::new(medium));
 
         self.dx_camera = &self.raster_to_camera * Vector3f::init([1.0, 0.0, 0.0]) - &self.raster_to_camera * Vector3f::init([0.0, 0.0, 0.0]);
         self.dy_camera = &self.raster_to_camera * Vector3f::init([0.0, 1.0, 0.0]) - &self.raster_to_camera * Vector3f::init([0.0, 0.0, 0.0]);
 
-        let res = film.full_resolution;
         let mut p_min = &self.raster_to_camera * Vector3f::init([0.0, 0.0, 1.0]);
         let mut p_max = &self.raster_to_camera * Vector3f::init([res.x(), res.y(), 1.0]);
         p_min = p_min / p_min.z();

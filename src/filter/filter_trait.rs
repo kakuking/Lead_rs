@@ -1,6 +1,7 @@
 use crate::common::*;
+use std::fmt::Debug;
 
-pub trait Filter {
+pub trait Filter: Debug {
     fn radius(&self) -> Vector2f;
     fn inv_radius(&self) -> Vector2f;
     

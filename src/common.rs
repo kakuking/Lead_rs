@@ -7,6 +7,7 @@ pub use crate::factory::{register_lead_object, create_lead_object};
 
 pub use crate::accel::*;
 pub use crate::camera::*;
+pub use crate::film::*;
 pub use crate::filter::*;
 pub use crate::geometry::*;
 pub use crate::integrator::*;

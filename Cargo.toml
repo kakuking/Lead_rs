@@ -11,3 +11,8 @@ num-traits = "0.2"
 derive_more = { version = "1", features = ["index", "index_mut"] }
 rand = "0.8.5"
 pcg_rand = "0.13.0"
+atomic_float = "1.1.0"
+exr = "1.73.0"
+
+[profile.release]
+lto = true

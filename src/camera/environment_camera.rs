@@ -59,9 +59,7 @@ impl LeadObjectTrait for EnvironmentCamera {
         let up = prop_list.get_vector3("up", Vector3f::init([0.0, 1.0, 0.0]));
 
         let camera_to_world = Transform::look_at(&origin, &lookat, &up);
-        let film = Film{
-            full_resolution: Point2f::init([800.0, 600.0])
-        };
+        let film = Film::new();
         let medium = Medium {};
 
         self.set_medium(Arc::new(medium));
