@@ -99,11 +99,11 @@ impl Camera for OrthographicCamera {
     }
 
     fn sample_wi(&self, _reference: Arc<dyn Interaction>, _u: &Point2f, _wi: &mut Vector3f,_pdf: &mut f32, _p_raster: &mut Point2f, _vis: &mut VisibilityTester) -> Spectrum {
-        Spectrum::from_rgb([0.0, 0.0, 0.0], SpectrumType::Reflectance)
+        Spectrum::from_rgb([0.0, 0.0, 0.0])
     }
 
     fn we(&self, _ray: &Ray, _p_raster_2: &mut Point2f) -> Spectrum {
-        Spectrum::from_rgb([0.0, 0.0, 0.0], SpectrumType::Reflectance)
+        Spectrum::from_rgb([0.0, 0.0, 0.0])
     }
 }   
 

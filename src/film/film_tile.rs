@@ -9,7 +9,7 @@ pub struct FilmTilePixel {
 impl FilmTilePixel {
     pub fn new() -> Self {
         Self {
-            contrib_sum: Spectrum::from_rgb([0.0, 0.0, 0.0], SpectrumType::Reflectance),
+            contrib_sum: Spectrum::from_rgb([0.0, 0.0, 0.0]),
             filter_weight_sum: 0.0
         }
     }

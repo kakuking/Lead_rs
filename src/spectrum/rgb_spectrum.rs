@@ -1,4 +1,4 @@
-use std::ops::{Add, Mul};
+use std::ops::{Add, Div, Mul};
 
 use crate::common::*;
 use derive_more::{Index, IndexMut};
@@ -204,14 +204,14 @@ impl CoefficientSpectrum<3> for RGBSpectrum {
 }
 
 impl RGBSpectrum {
-    pub fn from_rgb(rgb: [f64; 3], _spectrum_type: SpectrumType) -> Self {
+    pub fn from_rgb(rgb: [f64; 3]) -> Self {
         let c = rgb.clone();
         Self {
             c
         }
     }
 
-    pub fn from_xyz(xyz: [f64; 3], _spectrum_type: SpectrumType) -> Self {
+    pub fn from_xyz(xyz: [f64; 3]) -> Self {
         let mut rgb = [0.0; 3];
 
         rgb[0] =  3.240479*xyz[0] - 1.537150*xyz[1] - 0.498535*xyz[2];
@@ -257,7 +257,7 @@ impl RGBSpectrum {
         xyz[1] *= scale;
         xyz[2] *= scale;
 
-        Self::from_xyz(xyz, SpectrumType::Reflectance)
+        Self::from_xyz(xyz)
     }
 }
 
@@ -269,6 +269,34 @@ impl Mul<f64> for RGBSpectrum {
         c[0] = self.c[0] * rhs;
         c[1] = self.c[1] * rhs;
         c[2] = self.c[2] * rhs;
+        Self {
+            c
+        }
+    }
+}
+
+impl Div<f64> for RGBSpectrum {
+    type Output = Self;
+
+    fn div(self, rhs: f64) -> Self::Output {
+        let mut c = [0f64; 3];
+        c[0] = self.c[0] / rhs;
+        c[1] = self.c[1] / rhs;
+        c[2] = self.c[2] / rhs;
+        Self {
+            c
+        }
+    }
+}
+
+impl Mul for RGBSpectrum {
+    type Output = Self;
+
+    fn mul(self, rhs: Self) -> Self::Output {
+        let mut c = [0f64; 3];
+        c[0] = self.c[0] * rhs[0];
+        c[1] = self.c[1] * rhs[1];
+        c[2] = self.c[2] * rhs[2];
         Self {
             c
         }
