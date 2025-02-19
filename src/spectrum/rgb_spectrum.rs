@@ -1,4 +1,4 @@
-use std::ops::{Add, Div, Mul};
+use std::ops::{Add, Div, Mul, Sub};
 
 use crate::common::*;
 use derive_more::{Index, IndexMut};
@@ -259,6 +259,15 @@ impl RGBSpectrum {
 
         Self::from_xyz(xyz)
     }
+
+    pub fn norm(&self) -> f64 {
+        let mut ret = 0.0;
+        for i in 0..3 {
+            ret += self.c[i]*self.c[i];
+        }
+
+        ret.sqrt()
+    }
 }
 
 impl Mul<f64> for RGBSpectrum {
@@ -289,6 +298,34 @@ impl Div<f64> for RGBSpectrum {
     }
 }
 
+impl Mul<f32> for RGBSpectrum {
+    type Output = Self;
+
+    fn mul(self, rhs: f32) -> Self::Output {
+        let mut c = [0f64; 3];
+        c[0] = self.c[0] * rhs as f64;
+        c[1] = self.c[1] * rhs as f64;
+        c[2] = self.c[2] * rhs as f64;
+        Self {
+            c
+        }
+    }
+}
+
+impl Div<f32> for RGBSpectrum {
+    type Output = Self;
+
+    fn div(self, rhs: f32) -> Self::Output {
+        let mut c = [0f64; 3];
+        c[0] = self.c[0] / rhs as f64;
+        c[1] = self.c[1] / rhs as f64;
+        c[2] = self.c[2] / rhs as f64;
+        Self {
+            c
+        }
+    }
+}
+
 impl Mul for RGBSpectrum {
     type Output = Self;
 
@@ -303,6 +340,20 @@ impl Mul for RGBSpectrum {
     }
 }
 
+impl Div for RGBSpectrum {
+    type Output = Self;
+
+    fn div(self, rhs: Self) -> Self::Output {
+        let mut c = [0f64; 3];
+        c[0] = self.c[0] / rhs[0];
+        c[1] = self.c[1] / rhs[1];
+        c[2] = self.c[2] / rhs[2];
+        Self {
+            c
+        }
+    }
+}
+
 impl Add for RGBSpectrum {
     type Output = Self;
 
@@ -311,6 +362,21 @@ impl Add for RGBSpectrum {
         c[0] = self.c[0] + rhs[0];
         c[1] = self.c[1] + rhs[1];
         c[2] = self.c[2] + rhs[2];
+        Self {
+            c
+        }
+    }
+}
+
+
+impl Sub for RGBSpectrum {
+    type Output = Self;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        let mut c = [0f64; 3];
+        c[0] = self.c[0] - rhs[0];
+        c[1] = self.c[1] - rhs[1];
+        c[2] = self.c[2] - rhs[2];
         Self {
             c
         }
